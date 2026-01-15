@@ -33,3 +33,52 @@ export interface PaginationParams {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }
+
+/**
+ * User and Authentication types
+ */
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  businessName: string;
+  province: string;
+  address: string;
+  ntncnic: string;
+  role: 'ADMIN' | 'USER';
+  postInvoiceTokenTest: string | null;
+  validateInvoiceTokenTest: string | null;
+  postInvoiceToken: string | null;
+  validateInvoiceToken: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  status: string;
+  data: {
+    user: User;
+    accessToken: string;
+    refreshToken: string;
+  };
+}
+
+export interface RefreshTokenResponse {
+  status: string;
+  data: {
+    accessToken: string;
+  };
+}
+
+export interface ProfileResponse {
+  status: string;
+  data: {
+    user: User;
+  };
+}

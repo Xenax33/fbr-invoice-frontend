@@ -17,6 +17,7 @@ A modern, responsive website for Saad Traders offering FBR-compliant digital inv
 2. **Digital Invoice Services** - FBR-compliant invoicing solutions
 3. **Stitching Services** - Premium textile supplies and materials
 4. **Contact Us** - Contact form with EmailJS and WhatsApp integration
+5. **Login** - User authentication page (ready for backend integration)
 
 ## 🚀 Getting Started
 
@@ -75,6 +76,30 @@ Your email template should include these variables:
 - `{{phone}}` - Phone number
 - `{{subject}}` - Message subject
 - `{{message}}` - Message content
+
+## 🔐 Authentication Setup
+
+The login page is ready for backend integration:
+
+1. **Create your authentication API endpoint** at `/api/auth/login`
+2. **Update the login handler** in `app/login/page.tsx`:
+   ```typescript
+   const response = await fetch('/api/auth/login', {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify(formData),
+   });
+   ```
+3. **Implement session management** (JWT, cookies, etc.)
+4. **Add protected routes** using Next.js middleware
+5. **Configure user roles** and permissions as needed
+
+### Recommended Authentication Solutions
+- **NextAuth.js** - Full-featured authentication for Next.js
+- **Clerk** - Drop-in authentication with UI components
+- **Auth0** - Enterprise-grade authentication
+- **Supabase Auth** - Open-source authentication with database
+- **Custom JWT** - Build your own with JWT tokens
 
 ## 🎨 Adding Images and Logos
 
@@ -201,6 +226,7 @@ npm start
 ├── app/
 │   ├── contact/              # Contact page with form
 │   ├── digital-invoice/      # Digital invoice service page
+│   ├── login/                # Login page (ready for auth)
 │   ├── stitching-services/   # Stitching services page
 │   ├── layout.tsx            # Root layout with SEO
 │   ├── page.tsx              # Homepage

@@ -13,12 +13,12 @@ export default function Home() {
             <p className="mt-6 text-lg leading-8 text-gray-600">
               Your trusted partner for FBR-compliant digital invoicing solutions and premium quality stitching threads and dyeing materials. Excellence in every service we provide.
             </p>
-            <div className="mt-10 flex items-center justify-center gap-6">
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <CTAButton href="/contact">
                 Get Started Today
               </CTAButton>
-              <CTAButton href="#services" variant="secondary">
-                Explore Services
+              <CTAButton href="/login" variant="secondary">
+                Login to Account
               </CTAButton>
             </div>
           </div>
