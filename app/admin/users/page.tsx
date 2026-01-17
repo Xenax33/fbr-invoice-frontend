@@ -1,10 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import AdminLayout from '@/components/layouts/AdminLayout';
-import { userService, CreateUserRequest, UpdateUserRequest } from '@/services/user.service';
+import { CreateUserRequest, UpdateUserRequest } from '@/services/user.service';
 import type { User } from '@/types/api';
-import toast from 'react-hot-toast';
+import { useUsers, useCreateUser, useUpdateUser, useDeleteUser, useToggleUserStatus, useUpdateUserPassword } from '@/hooks/useUsers';
+import { 
+  UserPlus, 
+  Search, 
+  Edit, 
+  Trash2, 
+  Key, 
+  CheckCircle, 
+  XCircle,
+  ChevronLeft,
+  ChevronRight,
+  Shield,
+  User as UserIcon,
+  Mail,
+  Building2,
+  MapPin,
+  CreditCard,
+  Lock,
+  KeyRound,
+  ChevronDown,
+  ChevronUp
+} from 'lucide-react';
 
 const PROVINCES = [
   'Punjab',
@@ -17,14 +38,10 @@ const PROVINCES = [
 ];
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<'ALL' | 'ADMIN' | 'USER'>('ALL');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalUsers, setTotalUsers] = useState(0);
   
   // Modal states
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -32,6 +49,8 @@ export default function UsersPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [showFbrTokensCreate, setShowFbrTokensCreate] = useState(false);
+  const [showFbrTokensEdit, setShowFbrTokensEdit] = useState(false);
 
   // Form states
   const [formData, setFormData] = useState<CreateUserRequest>({
@@ -42,49 +61,43 @@ export default function UsersPage() {
     address: '',
     ntncnic: '',
     password: '',
+    postInvoiceTokenTest: '',
+    validateInvoiceTokenTest: '',
+    postInvoiceToken: '',
+    validateInvoiceToken: '',
   });
   const [newPassword, setNewPassword] = useState('');
 
-  // Fetch users
-  const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const params: any = {
-        page: currentPage,
-        limit: 10,
-      };
-      
-      if (searchTerm) params.search = searchTerm;
-      if (roleFilter !== 'ALL') params.role = roleFilter;
-      if (statusFilter !== 'ALL') params.isActive = statusFilter === 'ACTIVE';
-
-      const response = await userService.getAllUsers(params);
-      setUsers(response.data.users);
-      setTotalPages(response.data.pagination.totalPages);
-      setTotalUsers(response.data.pagination.total);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to fetch users');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
+  // Build query params
+  const queryParams = useMemo(() => {
+    const params: any = {
+      page: currentPage,
+      limit: 10,
+    };
+    if (searchTerm) params.search = searchTerm;
+    if (roleFilter !== 'ALL') params.role = roleFilter;
+    if (statusFilter !== 'ALL') params.isActive = statusFilter === 'ACTIVE';
+    return params;
   }, [currentPage, searchTerm, roleFilter, statusFilter]);
+
+  // React Query hooks
+  const { data, isLoading } = useUsers(queryParams);
+  const createUser = useCreateUser();
+  const updateUser = useUpdateUser();
+  const deleteUser = useDeleteUser();
+  const toggleStatus = useToggleUserStatus();
+  const updatePassword = useUpdateUserPassword();
+
+  const users = data?.data.users || [];
+  const totalUsers = data?.data.pagination.total || 0;
+  const totalPages = data?.data.pagination.totalPages || 1;
 
   // Create user
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await userService.createUser(formData);
-      toast.success('User created successfully!');
-      setShowCreateModal(false);
-      resetForm();
-      fetchUsers();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to create user');
-    }
+    await createUser.mutateAsync(formData);
+    setShowCreateModal(false);
+    resetForm();
   };
 
   // Update user
@@ -92,50 +105,35 @@ export default function UsersPage() {
     e.preventDefault();
     if (!selectedUser) return;
     
-    try {
-      const updateData: UpdateUserRequest = {
-        name: formData.name,
-        email: formData.email,
-        businessName: formData.businessName,
-        province: formData.province,
-        address: formData.address,
-        ntncnic: formData.ntncnic,
-      };
-      
-      await userService.updateUser(selectedUser.id, updateData);
-      toast.success('User updated successfully!');
-      setShowEditModal(false);
-      resetForm();
-      fetchUsers();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update user');
-    }
+    const updateData: UpdateUserRequest = {
+      name: formData.name,
+      email: formData.email,
+      businessName: formData.businessName,
+      province: formData.province,
+      address: formData.address,
+      ntncnic: formData.ntncnic,
+      postInvoiceTokenTest: formData.postInvoiceTokenTest,
+      validateInvoiceTokenTest: formData.validateInvoiceTokenTest,
+      postInvoiceToken: formData.postInvoiceToken,
+      validateInvoiceToken: formData.validateInvoiceToken,
+    };
+    
+    await updateUser.mutateAsync({ id: selectedUser.id, data: updateData });
+    setShowEditModal(false);
+    resetForm();
   };
 
   // Delete user
   const handleDeleteUser = async () => {
     if (!selectedUser) return;
-    
-    try {
-      await userService.deleteUser(selectedUser.id);
-      toast.success('User deleted successfully!');
-      setShowDeleteModal(false);
-      setSelectedUser(null);
-      fetchUsers();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete user');
-    }
+    await deleteUser.mutateAsync(selectedUser.id);
+    setShowDeleteModal(false);
+    setSelectedUser(null);
   };
 
   // Toggle user status
   const handleToggleStatus = async (user: User) => {
-    try {
-      await userService.toggleUserStatus(user.id);
-      toast.success(`User ${user.isActive ? 'deactivated' : 'activated'} successfully!`);
-      fetchUsers();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to toggle user status');
-    }
+    await toggleStatus.mutateAsync(user.id);
   };
 
   // Update password
@@ -143,15 +141,10 @@ export default function UsersPage() {
     e.preventDefault();
     if (!selectedUser) return;
     
-    try {
-      await userService.updateUserPassword(selectedUser.id, { password: newPassword });
-      toast.success('Password updated successfully!');
-      setShowPasswordModal(false);
-      setNewPassword('');
-      setSelectedUser(null);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update password');
-    }
+    await updatePassword.mutateAsync({ id: selectedUser.id, password: newPassword });
+    setShowPasswordModal(false);
+    setNewPassword('');
+    setSelectedUser(null);
   };
 
   // Helper functions
@@ -164,8 +157,14 @@ export default function UsersPage() {
       address: '',
       ntncnic: '',
       password: '',
+      postInvoiceTokenTest: '',
+      validateInvoiceTokenTest: '',
+      postInvoiceToken: '',
+      validateInvoiceToken: '',
     });
     setSelectedUser(null);
+    setShowFbrTokensCreate(false);
+    setShowFbrTokensEdit(false);
   };
 
   const openEditModal = (user: User) => {
@@ -178,7 +177,15 @@ export default function UsersPage() {
       address: user.address || '',
       ntncnic: user.ntncnic || '',
       password: '',
+      postInvoiceTokenTest: user.postInvoiceTokenTest || '',
+      validateInvoiceTokenTest: user.validateInvoiceTokenTest || '',
+      postInvoiceToken: user.postInvoiceToken || '',
+      validateInvoiceToken: user.validateInvoiceToken || '',
     });
+    // Auto-expand FBR tokens if user already has tokens
+    const hasTokens = user.postInvoiceTokenTest || user.validateInvoiceTokenTest || 
+                     user.postInvoiceToken || user.validateInvoiceToken;
+    setShowFbrTokensEdit(!!hasTokens);
     setShowEditModal(true);
   };
 
@@ -195,50 +202,56 @@ export default function UsersPage() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
-            <p className="mt-1 text-sm text-gray-600">Manage all platform users</p>
+            <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">User Management</h2>
+            <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-600 flex items-center">
+              <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-blue-600" />
+              Manage all platform users and permissions
+            </p>
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 group"
           >
-            <span className="mr-2">➕</span>
+            <UserPlus className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
             Create User
           </button>
         </div>
 
         {/* Filters */}
-        <div className="rounded-xl bg-white p-6 shadow-md">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-xl sm:rounded-2xl bg-white p-4 sm:p-6 shadow-lg border border-slate-200">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {/* Search */}
             <div className="lg:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Search</label>
-              <input
-                type="text"
-                placeholder="Search by name, email, or business..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Search</label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search by name, email, or business..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                />
+              </div>
             </div>
 
             {/* Role Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Role</label>
               <select
                 value={roleFilter}
                 onChange={(e) => {
                   setRoleFilter(e.target.value as any);
                   setCurrentPage(1);
                 }}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
               >
                 <option value="ALL">All Roles</option>
                 <option value="ADMIN">Admin</option>
@@ -248,14 +261,14 @@ export default function UsersPage() {
 
             {/* Status Filter */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Status</label>
               <select
                 value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value as any);
                   setCurrentPage(1);
                 }}
-                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
               >
                 <option value="ALL">All Status</option>
                 <option value="ACTIVE">Active</option>
@@ -265,107 +278,139 @@ export default function UsersPage() {
           </div>
 
           {/* Stats */}
-          <div className="mt-4 flex items-center justify-between border-t border-gray-200 pt-4">
-            <p className="text-sm text-gray-600">
-              Showing <span className="font-semibold">{users.length}</span> of{' '}
-              <span className="font-semibold">{totalUsers}</span> users
+          <div className="mt-4 sm:mt-5 flex items-center justify-between border-t-2 border-slate-200 pt-4 sm:pt-5">
+            <p className="text-xs sm:text-sm text-slate-600 flex items-center">
+              <UserIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-blue-600" />
+              Showing <span className="font-bold text-slate-900 mx-1">{users.length}</span> of{' '}
+              <span className="font-bold text-slate-900 ml-1">{totalUsers}</span> users
             </p>
           </div>
         </div>
 
         {/* Users Table */}
-        <div className="rounded-xl bg-white shadow-md overflow-hidden">
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+        <div className="rounded-xl sm:rounded-2xl bg-white shadow-lg border border-slate-200 overflow-hidden">
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-12 sm:py-16">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent shadow-lg"></div>
+              <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-slate-600 font-medium">Loading users...</p>
             </div>
           ) : users.length === 0 ? (
-            <div className="py-12 text-center">
-              <p className="text-gray-600">No users found</p>
+            <div className="py-12 sm:py-16 text-center">
+              <UserIcon className="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-slate-300 mb-3 sm:mb-4" />
+              <p className="text-slate-600 font-medium text-sm sm:text-base">No users found</p>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">Try adjusting your filters</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
+              <table className="w-full min-w-[640px]">
+                <thead className="bg-gradient-to-r from-slate-50 to-blue-50 border-b-2 border-slate-200">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
                       User
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider hidden md:table-cell">
                       Business
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
                       Role
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider hidden sm:table-cell">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-slate-200">
                   {users.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <p className="font-semibold text-gray-900">{user.name}</p>
-                          <p className="text-sm text-gray-600">{user.email}</p>
+                    <tr key={user.id} className="hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50 transition-all duration-200 group">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                        <div className="flex items-center space-x-2 sm:space-x-3">
+                          <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                            <UserIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-semibold text-slate-900 text-sm sm:text-base truncate">{user.name}</p>
+                            <p className="text-xs sm:text-sm text-slate-600 flex items-center truncate">
+                              <Mail className="h-3 w-3 mr-1 flex-shrink-0" />
+                              <span className="truncate">{user.email}</span>
+                            </p>
+                          </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 hidden md:table-cell">
                         <div>
-                          <p className="font-medium text-gray-900">{user.businessName || 'N/A'}</p>
-                          <p className="text-sm text-gray-600">{user.province || 'N/A'}</p>
+                          <p className="font-medium text-slate-900 flex items-center text-sm sm:text-base">
+                            <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-slate-400 flex-shrink-0" />
+                            <span className="truncate">{user.businessName || 'N/A'}</span>
+                          </p>
+                          <p className="text-xs sm:text-sm text-slate-600 flex items-center mt-1">
+                            <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+                            <span className="truncate">{user.province || 'N/A'}</span>
+                          </p>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                          className={`inline-flex items-center rounded-full px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-bold shadow-sm ${
                             user.role === 'ADMIN'
-                              ? 'bg-purple-100 text-purple-800'
-                              : 'bg-blue-100 text-blue-800'
+                              ? 'bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 border border-purple-300'
+                              : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300'
                           }`}
                         >
+                          <Shield className="h-3 w-3 mr-1" />
                           {user.role}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap hidden sm:table-cell">
                         <button
                           onClick={() => handleToggleStatus(user)}
-                          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
+                          className={`inline-flex items-center rounded-full px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-bold transition-all duration-200 shadow-sm hover:shadow-md ${
                             user.isActive
-                              ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                              : 'bg-red-100 text-red-800 hover:bg-red-200'
+                              ? 'bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800 hover:from-emerald-200 hover:to-emerald-300 border border-emerald-300'
+                              : 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 hover:from-red-200 hover:to-red-300 border border-red-300'
                           }`}
                         >
-                          {user.isActive ? '✓ Active' : '✕ Inactive'}
+                          {user.isActive ? (
+                            <>
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              Active
+                            </>
+                          ) : (
+                            <>
+                              <XCircle className="h-3 w-3 mr-1" />
+                              Inactive
+                            </>
+                          )}
                         </button>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <div className="flex items-center justify-end gap-2">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right">
+                        <div className="flex items-center justify-end gap-1 sm:gap-2">
                           <button
                             onClick={() => openEditModal(user)}
-                            className="rounded-lg bg-blue-100 px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-200 transition-colors"
+                            className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center group/btn"
                             title="Edit user"
                           >
-                            ✏️ Edit
+                            <Edit className="h-3.5 w-3.5 sm:mr-1 group-hover/btn:rotate-12 transition-transform duration-200" />
+                            <span className="hidden sm:inline">Edit</span>
                           </button>
                           <button
                             onClick={() => openPasswordModal(user)}
-                            className="rounded-lg bg-yellow-100 px-3 py-1.5 text-xs font-semibold text-yellow-700 hover:bg-yellow-200 transition-colors"
+                            className="rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold text-white hover:from-amber-600 hover:to-amber-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center group/btn"
                             title="Change password"
                           >
-                            🔑 Password
+                            <Key className="h-3.5 w-3.5 sm:mr-1 group-hover/btn:rotate-12 transition-transform duration-200" />
+                            <span className="hidden sm:inline">Password</span>
                           </button>
                           {user.role !== 'ADMIN' && (
                             <button
                               onClick={() => openDeleteModal(user)}
-                              className="rounded-lg bg-red-100 px-3 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-200 transition-colors"
+                              className="rounded-lg bg-gradient-to-r from-red-500 to-red-600 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold text-white hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center group/btn"
                               title="Delete user"
                             >
-                              🗑️ Delete
+                              <Trash2 className="h-3.5 w-3.5 sm:mr-1 group-hover/btn:rotate-12 transition-transform duration-200" />
+                              <span className="hidden sm:inline">Delete</span>
                             </button>
                           )}
                         </div>
@@ -379,23 +424,25 @@ export default function UsersPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t-2 border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50 px-4 sm:px-6 py-3 sm:py-4">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-slate-300 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md group"
               >
+                <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 group-hover:-translate-x-1 transition-transform duration-200" />
                 Previous
               </button>
-              <span className="text-sm text-gray-700">
+              <span className="text-xs sm:text-sm font-semibold text-slate-700 bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border-2 border-slate-200 shadow-sm">
                 Page {currentPage} of {totalPages}
               </span>
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-slate-300 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md group"
               >
                 Next
+                <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
               </button>
             </div>
           )}
@@ -404,56 +451,67 @@ export default function UsersPage() {
 
       {/* Create User Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Create New User</h3>
-            <form onSubmit={handleCreateUser} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4">
+          <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-xl sm:rounded-2xl bg-white shadow-2xl border-2 border-slate-200">
+            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 rounded-t-xl sm:rounded-t-2xl border-b-2 border-blue-700">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-white/20 flex items-center justify-center">
+                  <UserPlus className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Create New User</h3>
+              </div>
+            </div>
+            <form onSubmit={handleCreateUser} className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-5">
+              <div className="grid gap-4 sm:gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Name <span className="text-red-500">*</span>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <UserIcon className="h-4 w-4 mr-1.5 text-blue-600" />
+                    Name <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Email <span className="text-red-500">*</span>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <Mail className="h-4 w-4 mr-1.5 text-blue-600" />
+                    Email <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Business Name <span className="text-red-500">*</span>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <Building2 className="h-4 w-4 mr-1.5 text-blue-600" />
+                    Business Name <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.businessName}
                     onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Province <span className="text-red-500">*</span>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <MapPin className="h-4 w-4 mr-1.5 text-blue-600" />
+                    Province <span className="text-red-500 ml-1">*</span>
                   </label>
                   <select
                     required
                     value={formData.province}
                     onChange={(e) => setFormData({ ...formData, province: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                   >
                     <option value="">Select Province</option>
                     {PROVINCES.map((province) => (
@@ -464,32 +522,35 @@ export default function UsersPage() {
                   </select>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Address <span className="text-red-500">*</span>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <MapPin className="h-4 w-4 mr-1.5 text-blue-600" />
+                    Address <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    NTN/CNIC <span className="text-red-500">*</span>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <CreditCard className="h-4 w-4 mr-1.5 text-blue-600" />
+                    NTN/CNIC <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.ntncnic}
                     onChange={(e) => setFormData({ ...formData, ntncnic: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Password <span className="text-red-500">*</span>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <Lock className="h-4 w-4 mr-1.5 text-blue-600" />
+                    Password <span className="text-red-500 ml-1">*</span>
                   </label>
                   <input
                     type="password"
@@ -497,17 +558,111 @@ export default function UsersPage() {
                     minLength={8}
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
                   />
-                  <p className="mt-1 text-xs text-gray-500">Min. 8 characters with uppercase, lowercase, number & special char</p>
+                  <p className="mt-2 text-xs text-slate-500 flex items-center">
+                    <Shield className="h-3 w-3 mr-1" />
+                    Min. 8 characters with uppercase, lowercase, number & special char
+                  </p>
                 </div>
               </div>
-              <div className="flex gap-3 pt-4">
+
+              {/* FBR Token Fields Section - Collapsible */}
+              <div className="border-t-2 border-slate-200 pt-5 mt-5">
+                <button
+                  type="button"
+                  onClick={() => setShowFbrTokensCreate(!showFbrTokensCreate)}
+                  className="w-full flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 hover:from-indigo-100 hover:to-blue-100 border-2 border-indigo-200 transition-all duration-200 group"
+                >
+                  <div className="flex items-center">
+                    <KeyRound className="h-5 w-5 mr-3 text-indigo-600 group-hover:scale-110 transition-transform duration-200" />
+                    <div className="text-left">
+                      <h4 className="text-base font-bold text-slate-900">FBR API Tokens</h4>
+                      <p className="text-xs text-slate-600 mt-0.5">Optional - Click to {showFbrTokensCreate ? 'hide' : 'add'} token credentials</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-semibold text-indigo-600 bg-white px-2 py-1 rounded-full">Optional</span>
+                    {showFbrTokensCreate ? (
+                      <ChevronUp className="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-200" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-200" />
+                    )}
+                  </div>
+                </button>
+                
+                {showFbrTokensCreate && (
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2 bg-gradient-to-br from-slate-50 to-indigo-50 p-5 rounded-xl border-2 border-indigo-100 animate-in slide-in-from-top-2 duration-300">
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                        <KeyRound className="h-4 w-4 mr-1.5 text-indigo-600" />
+                        Post Invoice Token (Test)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.postInvoiceTokenTest || ''}
+                        onChange={(e) => setFormData({ ...formData, postInvoiceTokenTest: e.target.value })}
+                        placeholder="Enter test environment token"
+                        className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                        <KeyRound className="h-4 w-4 mr-1.5 text-indigo-600" />
+                        Validate Invoice Token (Test)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.validateInvoiceTokenTest || ''}
+                        onChange={(e) => setFormData({ ...formData, validateInvoiceTokenTest: e.target.value })}
+                        placeholder="Enter test validation token"
+                        className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                        <KeyRound className="h-4 w-4 mr-1.5 text-emerald-600" />
+                        Post Invoice Token (Production)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.postInvoiceToken || ''}
+                        onChange={(e) => setFormData({ ...formData, postInvoiceToken: e.target.value })}
+                        placeholder="Enter production token"
+                        className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                        <KeyRound className="h-4 w-4 mr-1.5 text-emerald-600" />
+                        Validate Invoice Token (Production)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.validateInvoiceToken || ''}
+                        onChange={(e) => setFormData({ ...formData, validateInvoiceToken: e.target.value })}
+                        placeholder="Enter production validation token"
+                        className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <p className="text-xs text-slate-500 flex items-center">
+                        <Shield className="h-3 w-3 mr-1" />
+                        FBR API tokens are optional. Add them only if you have received them from FBR.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3 pt-6 border-t-2 border-slate-200 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 rounded-lg bg-blue-600 px-4 py-2.5 font-semibold text-white hover:bg-blue-700 transition-colors"
+                  disabled={createUser.isPending}
+                  className="flex-1 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 font-semibold text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-200 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Create User
+                  <UserPlus className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
+                  {createUser.isPending ? 'Creating...' : 'Create User'}
                 </button>
                 <button
                   type="button"
@@ -515,7 +670,7 @@ export default function UsersPage() {
                     setShowCreateModal(false);
                     resetForm();
                   }}
-                  className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex-1 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
                 >
                   Cancel
                 </button>
@@ -527,44 +682,63 @@ export default function UsersPage() {
 
       {/* Edit User Modal */}
       {showEditModal && selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Edit User</h3>
-            <form onSubmit={handleUpdateUser} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-white shadow-2xl border-2 border-slate-200">
+            <div className="sticky top-0 bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-6 rounded-t-2xl border-b-2 border-indigo-700">
+              <div className="flex items-center space-x-3">
+                <div className="h-10 w-10 rounded-lg bg-white/20 flex items-center justify-center">
+                  <Edit className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white">Edit User</h3>
+              </div>
+            </div>
+            <form onSubmit={handleUpdateUser} className="p-8 space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <UserIcon className="h-4 w-4 mr-1.5 text-indigo-600" />
+                    Name
+                  </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <Mail className="h-4 w-4 mr-1.5 text-indigo-600" />
+                    Email
+                  </label>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Business Name</label>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <Building2 className="h-4 w-4 mr-1.5 text-indigo-600" />
+                    Business Name
+                  </label>
                   <input
                     type="text"
                     value={formData.businessName}
                     onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Province</label>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <MapPin className="h-4 w-4 mr-1.5 text-indigo-600" />
+                    Province
+                  </label>
                   <select
                     value={formData.province}
                     onChange={(e) => setFormData({ ...formData, province: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                   >
                     <option value="">Select Province</option>
                     {PROVINCES.map((province) => (
@@ -575,30 +749,127 @@ export default function UsersPage() {
                   </select>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <MapPin className="h-4 w-4 mr-1.5 text-indigo-600" />
+                    Address
+                  </label>
                   <input
                     type="text"
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">NTN/CNIC</label>
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <CreditCard className="h-4 w-4 mr-1.5 text-indigo-600" />
+                    NTN/CNIC
+                  </label>
                   <input
                     type="text"
                     value={formData.ntncnic}
                     onChange={(e) => setFormData({ ...formData, ntncnic: e.target.value })}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                   />
                 </div>
               </div>
-              <div className="flex gap-3 pt-4">
+
+              {/* FBR Token Fields Section - Collapsible */}
+              <div className="border-t-2 border-slate-200 pt-5 mt-5">
+                <button
+                  type="button"
+                  onClick={() => setShowFbrTokensEdit(!showFbrTokensEdit)}
+                  className="w-full flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-purple-50 to-indigo-50 hover:from-purple-100 hover:to-indigo-100 border-2 border-purple-200 transition-all duration-200 group"
+                >
+                  <div className="flex items-center">
+                    <KeyRound className="h-5 w-5 mr-3 text-purple-600 group-hover:scale-110 transition-transform duration-200" />
+                    <div className="text-left">
+                      <h4 className="text-base font-bold text-slate-900">FBR API Tokens</h4>
+                      <p className="text-xs text-slate-600 mt-0.5">Optional - Click to {showFbrTokensEdit ? 'hide' : 'update'} token credentials</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-semibold text-purple-600 bg-white px-2 py-1 rounded-full">Optional</span>
+                    {showFbrTokensEdit ? (
+                      <ChevronUp className="h-5 w-5 text-purple-600 group-hover:scale-110 transition-transform duration-200" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-purple-600 group-hover:scale-110 transition-transform duration-200" />
+                    )}
+                  </div>
+                </button>
+                
+                {showFbrTokensEdit && (
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2 bg-gradient-to-br from-slate-50 to-purple-50 p-5 rounded-xl border-2 border-purple-100 animate-in slide-in-from-top-2 duration-300">
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                        <KeyRound className="h-4 w-4 mr-1.5 text-purple-600" />
+                        Post Invoice Token (Test)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.postInvoiceTokenTest || ''}
+                        onChange={(e) => setFormData({ ...formData, postInvoiceTokenTest: e.target.value })}
+                        placeholder="Enter test environment token"
+                        className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                        <KeyRound className="h-4 w-4 mr-1.5 text-purple-600" />
+                        Validate Invoice Token (Test)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.validateInvoiceTokenTest || ''}
+                        onChange={(e) => setFormData({ ...formData, validateInvoiceTokenTest: e.target.value })}
+                        placeholder="Enter test validation token"
+                        className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                        <KeyRound className="h-4 w-4 mr-1.5 text-emerald-600" />
+                        Post Invoice Token (Production)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.postInvoiceToken || ''}
+                        onChange={(e) => setFormData({ ...formData, postInvoiceToken: e.target.value })}
+                        placeholder="Enter production token"
+                        className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div>
+                      <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                        <KeyRound className="h-4 w-4 mr-1.5 text-emerald-600" />
+                        Validate Invoice Token (Production)
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.validateInvoiceToken || ''}
+                        onChange={(e) => setFormData({ ...formData, validateInvoiceToken: e.target.value })}
+                        placeholder="Enter production validation token"
+                        className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <p className="text-xs text-slate-500 flex items-center">
+                        <Shield className="h-3 w-3 mr-1" />
+                        FBR API tokens are optional. Update them only if you have new tokens from FBR.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3 pt-6 border-t-2 border-slate-200 mt-6">
                 <button
                   type="submit"
-                  className="flex-1 rounded-lg bg-blue-600 px-4 py-2.5 font-semibold text-white hover:bg-blue-700 transition-colors"
+                  disabled={updateUser.isPending}
+                  className="flex-1 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 font-semibold text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all duration-200 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Update User
+                  <Edit className="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform duration-200" />
+                  {updateUser.isPending ? 'Updating...' : 'Update User'}
                 </button>
                 <button
                   type="button"
@@ -606,7 +877,7 @@ export default function UsersPage() {
                     setShowEditModal(false);
                     resetForm();
                   }}
-                  className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex-1 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
                 >
                   Cancel
                 </button>
@@ -618,28 +889,39 @@ export default function UsersPage() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Delete User</h3>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete <strong>{selectedUser.name}</strong>? This action cannot be undone.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={handleDeleteUser}
-                className="flex-1 rounded-lg bg-red-600 px-4 py-2.5 font-semibold text-white hover:bg-red-700 transition-colors"
-              >
-                Delete
-              </button>
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setSelectedUser(null);
-                }}
-                className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl border-2 border-slate-200">
+            <div className="bg-gradient-to-r from-red-500 to-red-600 px-8 py-6 rounded-t-2xl border-b-2 border-red-700">
+              <div className="flex items-center space-x-3">
+                <div className="h-10 w-10 rounded-lg bg-white/20 flex items-center justify-center">
+                  <Trash2 className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white">Delete User</h3>
+              </div>
+            </div>
+            <div className="p-8">
+              <p className="text-slate-600 mb-6 text-lg">
+                Are you sure you want to delete <strong className="text-slate-900">{selectedUser.name}</strong>? This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={handleDeleteUser}
+                  disabled={deleteUser.isPending}
+                  className="flex-1 rounded-xl bg-gradient-to-r from-red-500 to-red-600 px-6 py-3 font-semibold text-white hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/30 hover:shadow-red-500/50 transition-all duration-200 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Trash2 className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
+                  {deleteUser.isPending ? 'Deleting...' : 'Delete'}
+                </button>
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedUser(null);
+                  }}
+                  className="flex-1 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -647,48 +929,63 @@ export default function UsersPage() {
 
       {/* Update Password Modal */}
       {showPasswordModal && selectedUser && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Update Password</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Update password for <strong>{selectedUser.name}</strong>
-            </p>
-            <form onSubmit={handleUpdatePassword}>
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  New Password <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  required
-                  minLength={8}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter new password"
-                />
-                <p className="mt-1 text-xs text-gray-500">Min. 8 characters with uppercase, lowercase, number & special char</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl border-2 border-slate-200">
+            <div className="bg-gradient-to-r from-amber-500 to-amber-600 px-8 py-6 rounded-t-2xl border-b-2 border-amber-700">
+              <div className="flex items-center space-x-3">
+                <div className="h-10 w-10 rounded-lg bg-white/20 flex items-center justify-center">
+                  <Key className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-white">Update Password</h3>
               </div>
-              <div className="flex gap-3">
-                <button
-                  type="submit"
-                  className="flex-1 rounded-lg bg-blue-600 px-4 py-2.5 font-semibold text-white hover:bg-blue-700 transition-colors"
-                >
-                  Update Password
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowPasswordModal(false);
-                    setNewPassword('');
-                    setSelectedUser(null);
-                  }}
-                  className="flex-1 rounded-lg border border-gray-300 px-4 py-2.5 font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+            </div>
+            <div className="p-8">
+              <p className="text-sm text-slate-600 mb-6">
+                Update password for <strong className="text-slate-900">{selectedUser.name}</strong>
+              </p>
+              <form onSubmit={handleUpdatePassword}>
+                <div className="mb-6">
+                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
+                    <Lock className="h-4 w-4 mr-1.5 text-amber-600" />
+                    New Password <span className="text-red-500 ml-1">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={8}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all duration-200"
+                    placeholder="Enter new password"
+                  />
+                  <p className="mt-2 text-xs text-slate-500 flex items-center">
+                    <Shield className="h-3 w-3 mr-1" />
+                    Min. 8 characters with uppercase, lowercase, number & special char
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    disabled={updatePassword.isPending}
+                    className="flex-1 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-3 font-semibold text-white hover:from-amber-600 hover:to-amber-700 shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 transition-all duration-200 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Key className="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform duration-200" />
+                    {updatePassword.isPending ? 'Updating...' : 'Update Password'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPasswordModal(false);
+                      setNewPassword('');
+                      setSelectedUser(null);
+                    }}
+                    className="flex-1 rounded-xl border-2 border-slate-300 px-6 py-3 font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}

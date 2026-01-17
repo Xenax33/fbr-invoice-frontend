@@ -91,11 +91,19 @@ export function middleware(request: NextRequest) {
 
   // Redirect authenticated users away from login page
   if (isAuthRoute && isAuthenticated) {
-    // Redirect ADMIN to admin panel, others to home
+    // Redirect ADMIN to admin panel, others to dashboard
     if (userRole === 'ADMIN') {
       return NextResponse.redirect(new URL('/admin', request.url));
     }
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
+  // Redirect authenticated users from home page to their dashboard
+  if (pathname === '/' && isAuthenticated) {
+    if (userRole === 'ADMIN') {
+      return NextResponse.redirect(new URL('/admin', request.url));
+    }
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   return NextResponse.next();

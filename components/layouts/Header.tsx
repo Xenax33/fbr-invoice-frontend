@@ -55,6 +55,12 @@ export default function Header() {
                 <span className="font-semibold">{user.name}</span>
                 <span className="ml-2 text-xs text-gray-500">({user.role})</span>
               </div>
+              <Link
+                href={user.role === 'ADMIN' ? '/admin' : '/dashboard'}
+                className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+              >
+                {user.role === 'ADMIN' ? 'Admin Panel' : 'Dashboard'}
+              </Link>
               <button
                 onClick={() => logout()}
                 className="rounded-lg border-2 border-red-600 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 transition-colors"
@@ -138,6 +144,13 @@ export default function Header() {
                   <p className="text-xs text-gray-500">{user.email}</p>
                   <p className="text-xs text-gray-500 mt-1">Role: {user.role}</p>
                 </div>
+                <Link
+                  href={user.role === 'ADMIN' ? '/admin' : '/dashboard'}
+                  className="mt-2 block rounded-lg bg-blue-600 px-3 py-2.5 text-center text-base font-semibold text-white hover:bg-blue-700"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {user.role === 'ADMIN' ? 'Go to Admin Panel' : 'Go to Dashboard'}
+                </Link>
                 <button
                   onClick={() => {
                     setIsMenuOpen(false);

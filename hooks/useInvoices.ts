@@ -1,0 +1,107 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { invoiceService, GetInvoicesParams } from '@/services/invoice.service';
+import type { Invoice, CreateInvoiceRequest, ValidateInvoiceRequest } from '@/types/api';
+import toast from 'react-hot-toast';
+
+// Helper function to handle API errors with validation messages
+const handleApiError = (error: any, defaultMessage: string) => {
+  const response = error.response?.data;
+  
+  // Check for validation errors array
+  if (response?.errors && Array.isArray(response.errors)) {
+    // Show each validation error
+    response.errors.forEach((err: { field: string; message: string }) => {
+      toast.error(`${err.field}: ${err.message}`);
+    });
+  } else {
+    // Show general error message
+    toast.error(response?.message || defaultMessage);
+  }
+};
+
+// Query keys
+export const invoiceKeys = {
+  all: ['invoices'] as const,
+  lists: () => [...invoiceKeys.all, 'list'] as const,
+  list: (params: GetInvoicesParams) => [...invoiceKeys.lists(), params] as const,
+  details: () => [...invoiceKeys.all, 'detail'] as const,
+  detail: (id: string) => [...invoiceKeys.details(), id] as const,
+};
+
+/**
+ * Hook to fetch paginated list of invoices
+ */
+export function useInvoices(params?: GetInvoicesParams) {
+  return useQuery({
+    queryKey: invoiceKeys.list(params || {}),
+    queryFn: () => invoiceService.getInvoices(params),
+    staleTime: 30 * 1000, // 30 seconds
+  });
+}
+
+/**
+ * Hook to fetch a single invoice by ID
+ */
+export function useInvoice(id: string) {
+  return useQuery({
+    queryKey: invoiceKeys.detail(id),
+    queryFn: () => invoiceService.getInvoiceById(id),
+    enabled: !!id,
+  });
+}
+
+/**
+ * Hook to create and post a new invoice to FBR
+ */
+export function useCreateInvoice() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateInvoiceRequest) => invoiceService.createInvoice(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.lists() });
+      toast.success('Invoice created and posted to FBR successfully');
+    },
+    onError: (error: any) => {
+      handleApiError(error, 'Failed to create invoice');
+    },
+  });
+}
+
+/**
+ * Hook to validate an invoice with FBR
+ */
+export function useValidateInvoice() {
+  return useMutation({
+    mutationFn: (data: ValidateInvoiceRequest) => invoiceService.validateInvoice(data),
+    onSuccess: (data) => {
+      const result = data.data.validationResult;
+      if (result.status === 'valid') {
+        toast.success('Invoice is valid');
+      } else {
+        toast.error('Invoice validation failed');
+      }
+    },
+    onError: (error: any) => {
+      handleApiError(error, 'Failed to validate invoice');
+    },
+  });
+}
+
+/**
+ * Hook to delete an invoice
+ */
+export function useDeleteInvoice() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => invoiceService.deleteInvoice(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: invoiceKeys.lists() });
+      toast.success('Invoice deleted successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to delete invoice');
+    },
+  });
+}

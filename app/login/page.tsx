@@ -4,27 +4,27 @@ import type { Metadata } from 'next';
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLoading } from '@/contexts/LoadingContext';
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const { showLoading, hideLoading } = useLoading();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus('loading');
+    showLoading('Signing you in...');
 
     try {
       await login(formData.email, formData.password);
-      // Success toast is handled in the login function
-      setStatus('idle');
+      // Success - redirect will happen, no need to hide loader
     } catch (error) {
+      hideLoading();
       // Error toast is handled in the login function
-      setStatus('error');
     }
   };
 
@@ -109,10 +109,9 @@ export default function LoginPage() {
             <div>
               <button
                 type="submit"
-                disabled={status === 'loading'}
-                className="flex w-full justify-center rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex w-full justify-center rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 transition-all duration-200"
               >
-                {status === 'loading' ? 'Signing in...' : 'Sign in'}
+                Sign in
               </button>
             </div>
           </form>

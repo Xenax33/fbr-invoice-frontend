@@ -1,0 +1,108 @@
+import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import { hsCodeService, GetHSCodesParams } from '@/services/hsCode.service';
+import type { HSCode, CreateHSCodeRequest, UpdateHSCodeRequest, PaginatedResponse } from '@/types/api';
+import toast from 'react-hot-toast';
+
+// Helper function to handle API errors with validation messages
+const handleApiError = (error: any, defaultMessage: string) => {
+  const response = error.response?.data;
+  
+  // Check for validation errors array
+  if (response?.errors && Array.isArray(response.errors)) {
+    // Show each validation error
+    response.errors.forEach((err: { field: string; message: string }) => {
+      toast.error(`${err.field}: ${err.message}`);
+    });
+  } else {
+    // Show general error message
+    toast.error(response?.message || defaultMessage);
+  }
+};
+
+// Query keys
+export const hsCodeKeys = {
+  all: ['hsCodes'] as const,
+  lists: () => [...hsCodeKeys.all, 'list'] as const,
+  list: (params: GetHSCodesParams) => [...hsCodeKeys.lists(), params] as const,
+  details: () => [...hsCodeKeys.all, 'detail'] as const,
+  detail: (id: string) => [...hsCodeKeys.details(), id] as const,
+};
+
+/**
+ * Hook to fetch paginated list of HS codes
+ */
+export function useHSCodes(params?: GetHSCodesParams, options?: Omit<UseQueryOptions<PaginatedResponse<HSCode>>, 'queryKey' | 'queryFn'>) {
+  return useQuery<PaginatedResponse<HSCode>>({
+    queryKey: hsCodeKeys.list(params || {}),
+    queryFn: () => hsCodeService.getHSCodes(params),
+    staleTime: 30 * 60 * 1000, // 30 minutes - HS codes rarely change
+    ...options,
+  });
+}
+
+/**
+ * Hook to fetch a single HS code by ID
+ */
+export function useHSCode(id: string) {
+  return useQuery({
+    queryKey: hsCodeKeys.detail(id),
+    queryFn: () => hsCodeService.getHSCodeById(id),
+    enabled: !!id,
+  });
+}
+
+/**
+ * Hook to create a new HS code
+ */
+export function useCreateHSCode() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateHSCodeRequest) => hsCodeService.createHSCode(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: hsCodeKeys.lists() });
+      toast.success('HS Code created successfully');
+    },
+    onError: (error: any) => {
+      handleApiError(error, 'Failed to create HS code');
+    },
+  });
+}
+
+/**
+ * Hook to update an HS code
+ */
+export function useUpdateHSCode() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateHSCodeRequest }) =>
+      hsCodeService.updateHSCode(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: hsCodeKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: hsCodeKeys.detail(variables.id) });
+      toast.success('HS Code updated successfully');
+    },
+    onError: (error: any) => {
+      handleApiError(error, 'Failed to update HS code');
+    },
+  });
+}
+
+/**
+ * Hook to delete an HS code
+ */
+export function useDeleteHSCode() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => hsCodeService.deleteHSCode(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: hsCodeKeys.lists() });
+      toast.success('HS Code deleted successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to delete HS code');
+    },
+  });
+}

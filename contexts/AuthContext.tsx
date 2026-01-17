@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { User } from '@/types/api';
 import { authService } from '@/services/auth.service';
 import { useRouter } from 'next/navigation';
+import { useLoading } from '@/contexts/LoadingContext';
 import toast from 'react-hot-toast';
 
 interface AuthContextType {
@@ -58,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (response.data.user.role === 'ADMIN') {
         router.push('/admin');
       } else {
-        router.push('/');
+        router.push('/dashboard');
       }
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';

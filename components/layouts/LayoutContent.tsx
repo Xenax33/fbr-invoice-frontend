@@ -12,10 +12,11 @@ interface LayoutContentProps {
 export default function LayoutContent({ children }: LayoutContentProps) {
   const pathname = usePathname();
   
-  // Hide Header and Footer for admin routes
+  // Hide Header and Footer for admin and dashboard routes (they have their own layouts)
   const isAdminRoute = pathname?.startsWith('/admin');
+  const isDashboardRoute = pathname?.startsWith('/dashboard');
 
-  if (isAdminRoute) {
+  if (isAdminRoute || isDashboardRoute) {
     return <main>{children}</main>;
   }
 

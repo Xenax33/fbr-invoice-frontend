@@ -74,7 +74,7 @@ class UserService {
     if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
     
     const queryString = queryParams.toString();
-    const url = `/users${queryString ? `?${queryString}` : ''}`;
+    const url = `/v1/users${queryString ? `?${queryString}` : ''}`;
     
     const response = await axiosInstance.get<UsersListResponse>(url);
     return response.data;
@@ -84,7 +84,7 @@ class UserService {
    * Get a specific user by ID (Admin only)
    */
   async getUserById(id: string): Promise<UserResponse> {
-    const response = await axiosInstance.get<UserResponse>(`/users/${id}`);
+    const response = await axiosInstance.get<UserResponse>(`/v1/users/${id}`);
     return response.data;
   }
 
@@ -92,7 +92,7 @@ class UserService {
    * Create a new user (Admin only)
    */
   async createUser(userData: CreateUserRequest): Promise<UserResponse> {
-    const response = await axiosInstance.post<UserResponse>('/users', userData);
+    const response = await axiosInstance.post<UserResponse>('/v1/users', userData);
     return response.data;
   }
 
@@ -100,7 +100,7 @@ class UserService {
    * Update user information (Admin only)
    */
   async updateUser(id: string, userData: UpdateUserRequest): Promise<UserResponse> {
-    const response = await axiosInstance.patch<UserResponse>(`/users/${id}`, userData);
+    const response = await axiosInstance.patch<UserResponse>(`/v1/users/${id}`, userData);
     return response.data;
   }
 
@@ -108,14 +108,14 @@ class UserService {
    * Delete a user (Admin only)
    */
   async deleteUser(id: string): Promise<void> {
-    await axiosInstance.delete(`/users/${id}`);
+    await axiosInstance.delete(`/v1/users/${id}`);
   }
 
   /**
    * Toggle user's active/inactive status (Admin only)
    */
   async toggleUserStatus(id: string): Promise<UserResponse> {
-    const response = await axiosInstance.patch<UserResponse>(`/users/${id}/toggle-status`);
+    const response = await axiosInstance.patch<UserResponse>(`/v1/users/${id}/toggle-status`);
     return response.data;
   }
 

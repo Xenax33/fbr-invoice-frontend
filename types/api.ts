@@ -82,3 +82,135 @@ export interface ProfileResponse {
     user: User;
   };
 }
+
+/**
+ * Buyer Management types
+ */
+export interface Buyer {
+  id: string;
+  userId: string;
+  ntncnic: string;
+  businessName: string;
+  province: string;
+  address: string;
+  registrationType: 'Registered' | 'Unregistered';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateBuyerRequest {
+  ntncnic: string;
+  businessName: string;
+  province: string;
+  address: string;
+  registrationType: 'Registered' | 'Unregistered';
+}
+
+export interface UpdateBuyerRequest {
+  businessName?: string;
+  province?: string;
+  address?: string;
+  registrationType?: 'Registered' | 'Unregistered';
+}
+
+/**
+ * HS Code Management types
+ */
+export interface HSCode {
+  id: string;
+  userId: string;
+  hsCode: string;
+  description: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateHSCodeRequest {
+  hsCode: string;
+  description?: string;
+}
+
+export interface UpdateHSCodeRequest {
+  description?: string;
+}
+
+/**
+ * Scenario types
+ */
+export interface Scenario {
+  id: string;
+  scenarioCode: string;
+  scenarioDescription: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Invoice Management types
+ */
+export interface InvoiceItem {
+  id?: string;
+  invoiceId?: string;
+  hsCodeId: string;
+  hsCode?: HSCode;
+  productDescription: string;
+  rate: string;
+  uoM: string;
+  quantity: number;
+  totalValues: number;
+  valueSalesExcludingST: number;
+  fixedNotifiedValueOrRetailPrice: number;
+  salesTaxApplicable: number;
+  salesTaxWithheldAtSource: number;
+  extraTax: string;
+  furtherTax: number;
+  sroScheduleNo: string;
+  fedPayable: number;
+  discount: number;
+  saleType: string;
+  sroItemSerialNo: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Invoice {
+  id: string;
+  userId: string;
+  buyerId: string;
+  scenarioId: string;
+  invoiceType: string;
+  invoiceDate: string;
+  invoiceRefNo: string | null;
+  fbrInvoiceNumber: string | null;
+  fbrResponse: any;
+  isTestEnvironment: boolean;
+  createdAt: string;
+  updatedAt: string;
+  items?: InvoiceItem[];
+  buyer?: Buyer;
+  scenario?: Scenario;
+  user?: User;
+}
+
+export interface CreateInvoiceRequest {
+  invoiceType: string;
+  invoiceDate: string;
+  buyerId: string;
+  scenarioId: string;
+  invoiceRefNo?: string;
+  isTestEnvironment?: boolean;
+  items: InvoiceItem[];
+}
+
+export interface ValidateInvoiceRequest {
+  invoiceNumber: string;
+  isTestEnvironment?: boolean;
+}
+
+export interface ValidateInvoiceResponse {
+  status: string;
+  data: {
+    invoiceNumber: string;
+    validationResult: any;
+  };
+}
