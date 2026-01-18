@@ -48,7 +48,7 @@ export default function HSCodesPage() {
   const updateHSCode = useUpdateHSCode();
   const deleteHSCode = useDeleteHSCode();
 
-  const hsCodes = data?.hsCodes || [];
+  const hsCodes = data?.data || [];
   const totalHSCodes = data?.pagination.total || 0;
   const totalPages = data?.pagination.totalPages || 1;
 

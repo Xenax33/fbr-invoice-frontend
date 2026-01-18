@@ -66,7 +66,7 @@ export default function BuyersPage() {
   const updateBuyer = useUpdateBuyer();
   const deleteBuyer = useDeleteBuyer();
 
-  const buyers = data?.buyers || [];
+  const buyers = data?.data || [];
   const totalBuyers = data?.pagination.total || 0;
   const totalPages = data?.pagination.totalPages || 1;
 
