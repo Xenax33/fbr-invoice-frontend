@@ -14,7 +14,9 @@ import {
   Mail,
   Shield,
   Menu,
-  X
+  X,
+  Layers,
+  UserCog
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -42,6 +44,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Users', href: '/admin/users', icon: Users },
+    { name: 'Global Scenarios', href: '/admin/scenarios', icon: Layers },
+    { name: 'Scenario Assignments', href: '/admin/scenario-assignments', icon: UserCog },
   ];
 
   return (
@@ -158,10 +162,26 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           
           <div className="flex-1 lg:flex-none">
             <h1 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
-              {pathname === '/admin' ? 'Dashboard' : pathname === '/admin/users' ? 'User Management' : 'Admin Panel'}
+              {pathname === '/admin' 
+                ? 'Dashboard' 
+                : pathname === '/admin/users' 
+                ? 'User Management' 
+                : pathname === '/admin/scenarios'
+                ? 'Global Scenarios'
+                : pathname === '/admin/scenario-assignments'
+                ? 'Scenario Assignments'
+                : 'Admin Panel'}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-0.5 hidden sm:block">
-              {pathname === '/admin' ? 'Welcome back! Here\'s your overview' : pathname === '/admin/users' ? 'Manage system users and permissions' : 'Manage your platform'}
+              {pathname === '/admin' 
+                ? 'Welcome back! Here\'s your overview' 
+                : pathname === '/admin/users' 
+                ? 'Manage system users and permissions' 
+                : pathname === '/admin/scenarios'
+                ? 'Manage the global scenario catalog'
+                : pathname === '/admin/scenario-assignments'
+                ? 'Assign scenarios to users'
+                : 'Manage your platform'}
             </p>
           </div>
           <div className="hidden sm:flex items-center space-x-4">

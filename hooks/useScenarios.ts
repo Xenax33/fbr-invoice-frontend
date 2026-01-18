@@ -6,6 +6,7 @@ import {
   CreateScenarioRequest,
   UpdateScenarioRequest,
 } from "@/services/scenario.service";
+import { userScenariosService, UserAssignedScenario } from "@/services/userScenarios.service";
 import { Scenario, PaginatedResponse } from "@/types/api";
 
 // Helper function to handle API errors
@@ -30,10 +31,28 @@ export const scenarioKeys = {
   list: (params?: GetScenariosParams) => [...scenarioKeys.lists(), params] as const,
   details: () => [...scenarioKeys.all, "detail"] as const,
   detail: (id: string) => [...scenarioKeys.details(), id] as const,
+  myScenarios: () => [...scenarioKeys.all, "my-scenarios"] as const,
 };
 
 /**
+ * Hook to fetch user's assigned scenarios
+ * Used in user dashboard
+ */
+export function useMyScenarios(options?: Omit<UseQueryOptions<UserAssignedScenario[]>, 'queryKey' | 'queryFn'>) {
+  return useQuery<UserAssignedScenario[]>({
+    queryKey: scenarioKeys.myScenarios(),
+    queryFn: async () => {
+      const response = await userScenariosService.getMyScenarios();
+      return response.data.scenarios || [];
+    },
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    ...options,
+  });
+}
+
+/**
  * Hook to fetch paginated list of scenarios
+ * Deprecated: Use useMyScenarios instead for user dashboard
  */
 export function useScenarios(params?: GetScenariosParams, options?: Omit<UseQueryOptions<PaginatedResponse<Scenario>>, 'queryKey' | 'queryFn'>) {
   return useQuery<PaginatedResponse<Scenario>>({

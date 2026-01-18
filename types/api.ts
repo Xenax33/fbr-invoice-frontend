@@ -146,6 +146,52 @@ export interface Scenario {
 }
 
 /**
+ * Global Scenario types (Admin)
+ */
+export interface GlobalScenario {
+  id: string;
+  scenarioCode: string;
+  scenarioDescription: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateGlobalScenarioRequest {
+  scenarioCode: string;
+  scenarioDescription: string;
+}
+
+export interface UpdateGlobalScenarioRequest {
+  scenarioCode?: string;
+  scenarioDescription?: string;
+}
+
+export interface AssignScenarioRequest {
+  userId: string;
+  scenarioId: string;
+}
+
+export interface BulkAssignScenarioRequest {
+  userId: string;
+  scenarioIds?: string[];
+  scenarioCodes?: string[];
+}
+
+export interface UnassignScenarioRequest {
+  userId: string;
+  scenarioId: string;
+}
+
+export interface UserScenarioAssignment {
+  id: string;
+  userId: string;
+  scenarioId: string;
+  scenario?: GlobalScenario;
+  user?: User;
+  createdAt: string;
+}
+
+/**
  * Invoice Management types
  */
 export interface InvoiceItem {

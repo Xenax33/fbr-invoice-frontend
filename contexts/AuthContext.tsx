@@ -56,11 +56,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       toast.success(`Welcome back, ${response.data.user.name}!`);
       
       // Redirect based on role
-      if (response.data.user.role === 'ADMIN') {
-        router.push('/admin');
-      } else {
-        router.push('/dashboard');
-      }
+      const redirectPath = response.data.user.role === 'ADMIN' ? '/admin' : '/dashboard';
+      router.push(redirectPath);
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
       toast.error(errorMessage);

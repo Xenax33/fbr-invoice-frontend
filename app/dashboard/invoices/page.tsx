@@ -5,7 +5,7 @@ import UserLayout from '@/components/layouts/UserLayout';
 import { useInvoices, useCreateInvoice, useDeleteInvoice } from '@/hooks/useInvoices';
 import { useBuyers } from '@/hooks/useBuyers';
 import { useHSCodes } from '@/hooks/useHSCodes';
-import { useScenarios } from '@/hooks/useScenarios';
+import { useMyScenarios } from '@/hooks/useScenarios';
 import type { CreateInvoiceRequest, InvoiceItem } from '@/types/api';
 import { 
   Plus, 
@@ -79,7 +79,7 @@ export default function InvoicesPage() {
   const { data, isLoading } = useInvoices(queryParams);
   const { data: buyersData, refetch: refetchBuyers } = useBuyers({ limit: 100 });
   const { data: hsCodesData, refetch: refetchHSCodes } = useHSCodes({ limit: 100 });
-  const { data: scenariosData, refetch: refetchScenarios } = useScenarios({ limit: 100 });
+  const { data: scenariosData, refetch: refetchScenarios } = useMyScenarios();
   const createInvoice = useCreateInvoice();
   const deleteInvoice = useDeleteInvoice();
 
@@ -88,7 +88,7 @@ export default function InvoicesPage() {
   const totalPages = data?.pagination.totalPages || 1;
   const buyers = buyersData?.data || [];
   const hsCodes = hsCodesData?.data || [];
-  const scenarios = scenariosData?.data || [];
+  const scenarios = scenariosData || [];
 
   // Add new item to invoice
   const addItem = () => {
@@ -481,7 +481,7 @@ export default function InvoicesPage() {
                     >
                       <option value="">Select Scenario</option>
                       {scenarios.map((scenario: any) => (
-                        <option key={scenario.id} value={scenario.id}>
+                        <option key={scenario.scenarioId} value={scenario.scenarioId}>
                           {scenario.scenarioCode} - {scenario.scenarioDescription}
                         </option>
                       ))}

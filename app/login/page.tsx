@@ -21,7 +21,8 @@ export default function LoginPage() {
 
     try {
       await login(formData.email, formData.password);
-      // Success - redirect will happen, no need to hide loader
+      // Redirect is happening, hide loading after navigation starts
+      hideLoading();
     } catch (error) {
       hideLoading();
       // Error toast is handled in the login function
