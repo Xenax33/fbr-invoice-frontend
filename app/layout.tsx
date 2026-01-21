@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, DM_Sans } from "next/font/google";
 import QueryProvider from "@/components/providers/query-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LoadingProvider } from "@/contexts/LoadingContext";
@@ -9,14 +9,18 @@ import GlobalLoader from "@/components/GlobalLoader";
 import LayoutContent from "@/components/layouts/LayoutContent";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const playfairDisplay = Playfair_Display({
+  variable: "--font-display",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const dmSans = DM_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -94,10 +98,10 @@ export default function RootLayout({
       <head>
         <link rel="canonical" href="https://saadtraders.com" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#2563eb" />
+        <meta name="theme-color" content="#047857" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${playfairDisplay.variable} ${dmSans.variable} antialiased`}
       >
         <QueryProvider>
           <AuthProvider>
@@ -113,7 +117,7 @@ export default function RootLayout({
                   success: {
                     duration: 3000,
                     iconTheme: {
-                      primary: '#10b981',
+                      primary: '#047857',
                       secondary: '#fff',
                     },
                   },

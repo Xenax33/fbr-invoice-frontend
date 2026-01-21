@@ -1,69 +1,86 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8">
+    <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      scrolled 
+        ? 'glass-effect shadow-lg' 
+        : 'bg-white/80 backdrop-blur-sm border-b border-stone-200'
+    }`}>
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center">
-            <span className="text-white font-bold text-xl">ST</span>
+        <Link href="/" className="flex items-center space-x-3 group">
+          <div className="relative h-11 w-11 rounded-xl bg-gradient-to-br from-emerald-600 to-emerald-800 flex items-center justify-center shadow-md group-hover:shadow-lg transition-all">
+            <span className="font-display text-white text-xl">ST</span>
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-t from-emerald-900/20 to-transparent"></div>
           </div>
-          <span className="text-xl font-bold text-gray-900">Saad Traders</span>
+          <div className="flex flex-col">
+            <span className="font-display text-xl text-stone-900">Saad Traders</span>
+            <span className="text-[10px] text-stone-500 -mt-1 font-medium tracking-wider uppercase">Excellence in Service</span>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden min-[800px]:flex min-[800px]:gap-x-8">
+        <div className="hidden lg:flex lg:gap-x-1">
           <Link 
             href="/" 
-            className="text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600 transition-colors"
+            className="px-4 py-2 text-sm font-semibold text-stone-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all"
           >
             Home
           </Link>
           <Link 
             href="/digital-invoice" 
-            className="text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600 transition-colors"
+            className="px-4 py-2 text-sm font-semibold text-stone-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all"
           >
             Digital Invoice
           </Link>
           <Link 
             href="/stitching-services" 
-            className="text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600 transition-colors"
+            className="px-4 py-2 text-sm font-semibold text-stone-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all"
           >
             Stitching Services
           </Link>
           <Link 
             href="/contact" 
-            className="text-sm font-semibold leading-6 text-gray-900 hover:text-blue-600 transition-colors"
+            className="px-4 py-2 text-sm font-semibold text-stone-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-all"
           >
             Contact Us
           </Link>
         </div>
 
         {/* CTA Buttons - Desktop */}
-        <div className="hidden min-[800px]:flex min-[800px]:gap-x-3 min-[800px]:items-center">
+        <div className="hidden lg:flex lg:gap-x-3 lg:items-center">
           {isAuthenticated && user ? (
             <>
-              <div className="text-sm text-gray-700">
+              <div className="text-sm text-stone-700 mr-2">
                 <span className="font-semibold">{user.name}</span>
-                <span className="ml-2 text-xs text-gray-500">({user.role})</span>
+                <span className="ml-2 text-xs text-stone-500">({user.role})</span>
               </div>
               <Link
                 href={user.role === 'ADMIN' ? '/admin' : '/dashboard'}
-                className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+                className="rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg hover:from-emerald-700 hover:to-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-all"
               >
                 {user.role === 'ADMIN' ? 'Admin Panel' : 'Dashboard'}
               </Link>
               <button
                 onClick={() => logout()}
-                className="rounded-lg border-2 border-red-600 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 transition-colors"
+                className="rounded-lg border-2 border-red-600 px-5 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 transition-all"
               >
                 Logout
               </button>
@@ -72,13 +89,13 @@ export default function Header() {
             <>
               <Link
                 href="/login"
-                className="rounded-lg border-2 border-blue-600 px-4 py-2.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+                className="rounded-lg border-2 border-emerald-600 px-5 py-2.5 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-all"
               >
                 Login
               </Link>
               <Link
                 href="/contact"
-                className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+                className="rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:shadow-lg hover:from-emerald-700 hover:to-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-all"
               >
                 Get Started
               </Link>
@@ -89,16 +106,17 @@ export default function Header() {
         {/* Mobile menu button */}
         <button
           type="button"
-          className="min-[800px]:hidden rounded-md p-2.5 text-gray-700 hover:bg-gray-100"
+          className="lg:hidden rounded-lg p-2.5 text-stone-700 hover:bg-stone-100 transition-colors"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle menu"
         >
           <span className="sr-only">Open main menu</span>
           {isMenuOpen ? (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           ) : (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
           )}
@@ -107,56 +125,56 @@ export default function Header() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="min-[800px]:hidden border-t border-gray-200 bg-white">
-          <div className="space-y-1 px-4 pb-3 pt-2">
+        <div className="lg:hidden border-t border-stone-200 bg-white">
+          <div className="space-y-1 px-4 pb-4 pt-2">
             <Link
               href="/"
-              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50"
+              className="block rounded-lg px-4 py-3 text-base font-semibold text-stone-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Home
             </Link>
             <Link
               href="/digital-invoice"
-              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50"
+              className="block rounded-lg px-4 py-3 text-base font-semibold text-stone-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Digital Invoice
             </Link>
             <Link
               href="/stitching-services"
-              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50"
+              className="block rounded-lg px-4 py-3 text-base font-semibold text-stone-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Stitching Services
             </Link>
             <Link
               href="/contact"
-              className="block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50"
+              className="block rounded-lg px-4 py-3 text-base font-semibold text-stone-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Contact Us
             </Link>
+
             {isAuthenticated && user ? (
               <>
-                <div className="mt-4 px-3 py-2 border-t border-gray-200">
-                  <p className="text-sm font-semibold text-gray-900">{user.name}</p>
-                  <p className="text-xs text-gray-500">{user.email}</p>
-                  <p className="text-xs text-gray-500 mt-1">Role: {user.role}</p>
+                <div className="px-4 py-3 text-sm text-stone-600">
+                  <div className="font-semibold text-stone-900">{user.name}</div>
+                  <div className="text-xs text-stone-500 mt-1">{user.role}</div>
                 </div>
                 <Link
                   href={user.role === 'ADMIN' ? '/admin' : '/dashboard'}
-                  className="mt-2 block rounded-lg bg-blue-600 px-3 py-2.5 text-center text-base font-semibold text-white hover:bg-blue-700"
+                  className="block rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 py-3 text-center text-base font-semibold text-white shadow-md"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {user.role === 'ADMIN' ? 'Go to Admin Panel' : 'Go to Dashboard'}
+                  {user.role === 'ADMIN' ? 'Admin Panel' : 'Dashboard'}
                 </Link>
                 <button
                   onClick={() => {
-                    setIsMenuOpen(false);
                     logout();
+                    setIsMenuOpen(false);
                   }}
-                  className="mt-2 block w-full rounded-lg border-2 border-red-600 px-3 py-2.5 text-center text-base font-semibold text-red-600 hover:bg-red-50"
+                  className="w-full rounded-lg border-2 border-red-600 px-4 py-3 text-center text-base font-semibold text-red-600 hover:bg-red-50"
                 >
                   Logout
                 </button>
@@ -165,14 +183,14 @@ export default function Header() {
               <>
                 <Link
                   href="/login"
-                  className="mt-2 block rounded-lg border-2 border-blue-600 px-3 py-2.5 text-center text-base font-semibold text-blue-600 hover:bg-blue-50"
+                  className="block rounded-lg border-2 border-emerald-600 px-4 py-3 text-center text-base font-semibold text-emerald-700 hover:bg-emerald-50"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Login
                 </Link>
                 <Link
                   href="/contact"
-                  className="mt-2 block rounded-lg bg-blue-600 px-3 py-2.5 text-center text-base font-semibold text-white hover:bg-blue-700"
+                  className="block rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 py-3 text-center text-base font-semibold text-white shadow-md"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Get Started

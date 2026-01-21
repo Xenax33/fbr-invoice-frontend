@@ -9,25 +9,31 @@ interface ServiceCardProps {
 
 export function ServiceCard({ title, description, icon, href }: ServiceCardProps) {
   return (
-    <Link href={href} className="group">
-      <div className="relative overflow-hidden rounded-2xl bg-white p-8 shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
-        <div className="flex flex-col h-full">
-          <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-blue-100 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+    <Link href={href} className="group block h-full">
+      <div className="relative overflow-hidden rounded-2xl bg-white p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-stone-200 h-full hover-lift">
+        {/* Decorative corner accent */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-50 to-transparent rounded-bl-[100px] opacity-60 group-hover:opacity-100 transition-opacity"></div>
+        
+        <div className="relative flex flex-col h-full">
+          <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-700 group-hover:from-emerald-600 group-hover:to-emerald-700 group-hover:text-white transition-all duration-300 shadow-md group-hover:shadow-lg group-hover:scale-110">
             {icon}
           </div>
-          <h3 className="mb-3 text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+          <h3 className="font-display mb-4 text-2xl font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
             {title}
           </h3>
-          <p className="text-gray-600 leading-relaxed flex-grow">
+          <p className="text-stone-600 leading-relaxed flex-grow mb-6">
             {description}
           </p>
-          <div className="mt-6 flex items-center text-blue-600 font-semibold group-hover:translate-x-1 transition-transform">
-            Learn more
-            <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <div className="flex items-center text-emerald-700 font-semibold group-hover:text-emerald-600 group-hover:gap-3 gap-2 transition-all">
+            <span>Explore Service</span>
+            <svg className="h-5 w-5 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </div>
         </div>
+
+        {/* Hover accent line */}
+        <div className="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r from-emerald-600 to-amber-500 group-hover:w-full transition-all duration-500"></div>
       </div>
     </Link>
   );
@@ -41,12 +47,14 @@ interface FeatureCardProps {
 
 export function FeatureCard({ title, description, icon }: FeatureCardProps) {
   return (
-    <div className="flex flex-col items-start">
-      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+    <div className="group flex flex-col items-start p-6 rounded-xl hover:bg-stone-50 transition-all duration-300">
+      <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-700 group-hover:from-emerald-600 group-hover:to-emerald-700 group-hover:text-white transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:scale-105">
         {icon}
       </div>
-      <h3 className="mb-2 text-lg font-semibold text-gray-900">{title}</h3>
-      <p className="text-gray-600 leading-relaxed">{description}</p>
+      <h3 className="font-display mb-3 text-xl font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
+        {title}
+      </h3>
+      <p className="text-stone-600 leading-relaxed">{description}</p>
     </div>
   );
 }
@@ -59,10 +67,10 @@ interface CTAButtonProps {
 }
 
 export function CTAButton({ href, children, variant = 'primary', className = '' }: CTAButtonProps) {
-  const baseStyles = "inline-flex items-center justify-center rounded-lg px-6 py-3 text-base font-semibold transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
+  const baseStyles = "inline-flex items-center justify-center rounded-xl px-8 py-4 text-base font-bold transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1";
   const variants = {
-    primary: "bg-blue-600 text-white shadow-lg hover:bg-blue-700 focus-visible:outline-blue-600 hover:shadow-xl",
-    secondary: "bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50"
+    primary: "bg-gradient-to-r from-emerald-600 to-emerald-700 text-white hover:from-emerald-700 hover:to-emerald-800 focus-visible:outline-emerald-600",
+    secondary: "bg-white text-emerald-700 border-2 border-white hover:bg-emerald-50 hover:border-emerald-100"
   };
 
   return (
