@@ -141,6 +141,7 @@ export interface Scenario {
   id: string;
   scenarioCode: string;
   scenarioDescription: string;
+  salesType?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -152,6 +153,7 @@ export interface GlobalScenario {
   id: string;
   scenarioCode: string;
   scenarioDescription: string;
+  salesType: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -159,11 +161,13 @@ export interface GlobalScenario {
 export interface CreateGlobalScenarioRequest {
   scenarioCode: string;
   scenarioDescription: string;
+  salesType: string;
 }
 
 export interface UpdateGlobalScenarioRequest {
   scenarioCode?: string;
   scenarioDescription?: string;
+  salesType?: string;
 }
 
 export interface AssignScenarioRequest {

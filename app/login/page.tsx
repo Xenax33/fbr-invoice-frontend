@@ -19,14 +19,12 @@ export default function LoginPage() {
     e.preventDefault();
     e.stopPropagation();
     
-    console.log('Form submit triggered', { email: formData.email });
-    showLoading('Signing you in...');
+    showLoading();
 
     try {
-      console.log('Calling login...');
       await login(formData.email, formData.password);
-      console.log('Login successful');
-      // Don't hide loading immediately - let redirect happen
+      hideLoading(); // Hide loader immediately after successful login
+      // Router redirect happens in AuthContext login function
     } catch (error) {
       console.error('Login failed:', error);
       hideLoading();

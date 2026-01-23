@@ -7,6 +7,7 @@ interface LoadingContextType {
   loadingMessage: string;
   showLoading: (message?: string) => void;
   hideLoading: () => void;
+  resetLoading: () => void;
 }
 
 const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
@@ -24,8 +25,13 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   };
 
+  const resetLoading = () => {
+    setIsLoading(false);
+    setLoadingMessage('Loading...');
+  };
+
   return (
-    <LoadingContext.Provider value={{ isLoading, loadingMessage, showLoading, hideLoading }}>
+    <LoadingContext.Provider value={{ isLoading, loadingMessage, showLoading, hideLoading, resetLoading }}>
       {children}
     </LoadingContext.Provider>
   );

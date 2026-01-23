@@ -29,6 +29,7 @@ export default function AdminScenariosPage() {
   const [formData, setFormData] = useState({
     scenarioCode: '',
     scenarioDescription: '',
+    salesType: '',
   });
 
   const { data: scenariosResponse, isLoading } = useGlobalScenarios();
@@ -46,7 +47,7 @@ export default function AdminScenariosPage() {
   );
 
   const handleCreate = () => {
-    setFormData({ scenarioCode: '', scenarioDescription: '' });
+    setFormData({ scenarioCode: '', scenarioDescription: '', salesType: '' });
     setIsCreateModalOpen(true);
   };
 
@@ -55,6 +56,7 @@ export default function AdminScenariosPage() {
     setFormData({
       scenarioCode: scenario.scenarioCode,
       scenarioDescription: scenario.scenarioDescription,
+      salesType: scenario.salesType || '',
     });
     setIsEditModalOpen(true);
   };
@@ -145,9 +147,14 @@ export default function AdminScenariosPage() {
                   <p className="text-gray-600 ml-8">
                     {scenario.scenarioDescription}
                   </p>
-                  <p className="text-sm text-gray-400 ml-8 mt-2">
-                    Created: {new Date(scenario.createdAt).toLocaleDateString()}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-3 ml-8 mt-3">
+                    <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-100">
+                      {scenario.salesType || '—'}
+                    </span>
+                    <span className="text-sm text-gray-400">
+                      Created: {new Date(scenario.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -232,6 +239,36 @@ export default function AdminScenariosPage() {
                   required
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Sales Type *
+                </label>
+                <input
+                  type="text"
+                  value={formData.salesType}
+                  onChange={(e) =>
+                    setFormData({ ...formData, salesType: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="e.g., Goods at Standard Rate (default)"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Sales Type *
+                </label>
+                <input
+                  type="text"
+                  value={formData.salesType}
+                  onChange={(e) =>
+                    setFormData({ ...formData, salesType: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="e.g., Goods at Standard Rate (default)"
+                  required
+                />
+              </div>
               <div className="flex gap-3 pt-4">
                 <button
                   type="button"
@@ -298,6 +335,21 @@ export default function AdminScenariosPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   placeholder="e.g., Goods at standard rate to registered buyers"
                   rows={3}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Sales Type *
+                </label>
+                <input
+                  type="text"
+                  value={formData.salesType}
+                  onChange={(e) =>
+                    setFormData({ ...formData, salesType: e.target.value })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="e.g., Goods at Standard Rate (default)"
                   required
                 />
               </div>

@@ -4,7 +4,6 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { User } from '@/types/api';
 import { authService } from '@/services/auth.service';
 import { useRouter } from 'next/navigation';
-import { useLoading } from '@/contexts/LoadingContext';
 import toast from 'react-hot-toast';
 
 interface AuthContextType {

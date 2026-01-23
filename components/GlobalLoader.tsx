@@ -9,21 +9,14 @@ export default function GlobalLoader() {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md">
-      <div className="rounded-2xl bg-white shadow-2xl border-2 border-blue-200 px-8 py-10 text-center">
-        {/* Typing Indicator */}
-        <div className="typing-indicator mx-auto mb-6">
-          <div className="typing-circle"></div>
-          <div className="typing-circle"></div>
-          <div className="typing-circle"></div>
-          <div className="typing-shadow"></div>
-          <div className="typing-shadow"></div>
-          <div className="typing-shadow"></div>
-        </div>
-
-        {/* Loading Message */}
-        <p className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-          {loadingMessage}
-        </p>
+      {/* Typing Indicator */}
+      <div className="typing-indicator mx-auto mb-6">
+        <div className="typing-circle"></div>
+        <div className="typing-circle"></div>
+        <div className="typing-circle"></div>
+        <div className="typing-shadow"></div>
+        <div className="typing-shadow"></div>
+        <div className="typing-shadow"></div>
       </div>
 
       <style jsx>{`

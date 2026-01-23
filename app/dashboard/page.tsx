@@ -2,11 +2,19 @@
 
 import UserLayout from '@/components/layouts/UserLayout';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLoading } from '@/contexts/LoadingContext';
 import Link from 'next/link';
 import { Users, Package, FileBarChart, ArrowRight, Plus, CheckCircle, AlertCircle, TrendingUp, Building2, MapPin } from 'lucide-react';
+import { useEffect } from 'react';
 
 export default function UserDashboard() {
   const { user } = useAuth();
+  const { resetLoading } = useLoading();
+
+  // Clear loading state when dashboard mounts
+  useEffect(() => {
+    resetLoading();
+  }, [resetLoading]);
 
   const quickActions = [
     {

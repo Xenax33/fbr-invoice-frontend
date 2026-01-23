@@ -2,11 +2,19 @@
 
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLoading } from '@/contexts/LoadingContext';
 import Link from 'next/link';
 import { Users, UserCheck, FileText, DollarSign, ArrowRight, UserPlus, Globe, TrendingUp } from 'lucide-react';
+import { useEffect } from 'react';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
+  const { resetLoading } = useLoading();
+
+  // Clear loading state when admin dashboard mounts
+  useEffect(() => {
+    resetLoading();
+  }, [resetLoading]);
 
   const stats = [
     { 
