@@ -17,13 +17,18 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('Form submit triggered', { email: formData.email });
     showLoading('Signing you in...');
 
     try {
+      console.log('Calling login...');
       await login(formData.email, formData.password);
-      // Redirect is happening, hide loading after navigation starts
-      hideLoading();
+      console.log('Login successful');
+      // Don't hide loading immediately - let redirect happen
     } catch (error) {
+      console.error('Login failed:', error);
       hideLoading();
       // Error toast is handled in the login function
     }

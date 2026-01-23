@@ -51,15 +51,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log('Starting login process...', { email });
       const response = await authService.login({ email, password });
-      setUser(response.data.user);
-      toast.success(`Welcome back, ${response.data.user.name}!`);
+      console.log('Login response received:', response);
       
-      // Redirect based on role
-      const redirectPath = response.data.user.role === 'ADMIN' ? '/admin' : '/dashboard';
-      router.push(redirectPath);
+      if (response && response.data && response.data.user) {
+        setUser(response.data.user);
+        toast.success(`Welcome back, ${response.data.user.name}!`);
+        
+        // Small delay to ensure state is updated before redirect
+        setTimeout(() => {
+          const redirectPath = response.data.user.role === 'ADMIN' ? '/admin' : '/dashboard';
+          console.log('Redirecting to:', redirectPath);
+          router.push(redirectPath);
+        }, 100);
+      } else {
+        throw new Error('Invalid response from server');
+      }
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
+      console.error('Login error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Login failed. Please try again.';
       toast.error(errorMessage);
       throw error;
     }

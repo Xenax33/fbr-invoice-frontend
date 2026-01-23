@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, DM_Sans } from "next/font/google";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import QueryProvider from "@/components/providers/query-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LoadingProvider } from "@/contexts/LoadingContext";
@@ -9,17 +9,17 @@ import GlobalLoader from "@/components/GlobalLoader";
 import LayoutContent from "@/components/layouts/LayoutContent";
 import "./globals.css";
 
-const playfairDisplay = Playfair_Display({
+const fraunces = Fraunces({
   variable: "--font-display",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
-const dmSans = DM_Sans({
+const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -101,7 +101,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#047857" />
       </head>
       <body
-        className={`${playfairDisplay.variable} ${dmSans.variable} antialiased`}
+        className={`${fraunces.variable} ${plusJakartaSans.variable} antialiased`}
       >
         <QueryProvider>
           <AuthProvider>

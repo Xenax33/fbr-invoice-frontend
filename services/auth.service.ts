@@ -17,6 +17,7 @@ export const authService = {
     );
     
     // Store tokens in cookies (httpOnly would be better but requires server-side)
+    console.log('Login response data:', response.data);
     const { accessToken, refreshToken, user } = response.data.data;
     
     // Set cookies with appropriate expiry
