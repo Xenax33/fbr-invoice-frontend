@@ -3,9 +3,11 @@ import Cookies from 'js-cookie';
 
 /**
  * Axios instance configuration
+ * API baseURL is set via environment variable for security
+ * Tokens are managed via httpOnly cookies to prevent XSS attacks
  */
 const axiosInstance: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || '/api/proxy',
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",

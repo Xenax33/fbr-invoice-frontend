@@ -21,19 +21,23 @@ export default function ContactForm() {
     setErrorMessage('');
 
     try {
-      // Replace these with your actual EmailJS credentials
-      // You'll need to set these up at https://www.emailjs.com/
+      // EmailJS credentials (env overrides provided defaults)
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '';
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '';
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '';
+
       const result = await emailjs.send(
-        'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
-        'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
+        serviceId,
+        templateId,
         {
           from_name: formData.name,
           from_email: formData.email,
           phone: formData.phone,
           subject: formData.subject,
           message: formData.message,
+          date: new Date().toLocaleString(),
         },
-        'YOUR_PUBLIC_KEY' // Replace with your EmailJS public key
+        publicKey
       );
 
       if (result.status === 200) {

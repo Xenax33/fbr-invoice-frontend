@@ -55,20 +55,11 @@ export const useCreateGlobalScenario = () => {
       showLoading('Creating global scenario...');
       return adminScenarioService.createGlobalScenario(data);
     },
-    onSuccess: (response) => {
+    onSuccess: () => {
       hideLoading();
-      // Invalidate all global scenario queries (any page/search params)
-      queryClient.invalidateQueries({ queryKey: ['admin', 'scenarios', 'global'], exact: false });
-
-      // Optimistically update cached lists
-      queryClient.setQueriesData({ queryKey: ['admin', 'scenarios', 'global'], exact: false }, (oldData: any) => {
-        if (!oldData?.data) return oldData;
-        const newScenario = response?.data?.scenario;
-        if (!newScenario) return oldData;
-        return {
-          ...oldData,
-          data: [newScenario, ...oldData.data],
-        };
+      // Invalidate all global scenario queries
+      queryClient.invalidateQueries({
+        queryKey: ['admin', 'scenarios', 'global'],
       });
       toast.success('Global scenario created successfully');
     },
@@ -137,17 +128,10 @@ export const useDeleteGlobalScenario = () => {
       showLoading('Deleting global scenario...');
       return adminScenarioService.deleteGlobalScenario(id);
     },
-    onSuccess: (_, id) => {
+    onSuccess: () => {
       hideLoading();
-      queryClient.invalidateQueries({ queryKey: ['admin', 'scenarios', 'global'], exact: false });
-
-      // Optimistically update cached lists
-      queryClient.setQueriesData({ queryKey: ['admin', 'scenarios', 'global'], exact: false }, (oldData: any) => {
-        if (!oldData?.data) return oldData;
-        return {
-          ...oldData,
-          data: oldData.data.filter((item: any) => item.id !== id),
-        };
+      queryClient.invalidateQueries({
+        queryKey: ['admin', 'scenarios', 'global'],
       });
       toast.success('Global scenario deleted successfully');
     },

@@ -20,7 +20,7 @@ import {
 import Link from 'next/link';
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -32,12 +32,18 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
 
   // Redirect if not authenticated or not a user
   useEffect(() => {
-    if (!user) {
+    if (!isLoading && !user) {
       router.push('/login');
-    } else if (user.role !== 'USER') {
+    } else if (!isLoading && user && user.role !== 'USER') {
       router.push('/admin');
     }
-  }, [user, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isLoading]);
+
+  // Show nothing while loading
+  if (isLoading) {
+    return null;
+  }
 
   if (!user || user.role !== 'USER') {
     return null;

@@ -116,7 +116,7 @@ export function middleware(request: NextRequest) {
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com data:;
     img-src 'self' data: https: blob:;
-    connect-src 'self' https://api.emailjs.com ${process.env.NEXT_PUBLIC_API_URL || '*'};
+    connect-src 'self' https://api.emailjs.com https://gw.fbr.gov.pk ${process.env.NEXT_PUBLIC_API_URL || '*'};
     frame-src 'self';
     object-src 'none';
     base-uri 'self';
