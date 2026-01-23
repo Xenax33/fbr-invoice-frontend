@@ -1,5 +1,5 @@
 import axiosInstance from '@/lib/axios';
-import type { HSCode, CreateHSCodeRequest, UpdateHSCodeRequest, PaginatedResponse } from '@/types/api';
+import type { HSCode, CreateHSCodeRequest, BulkCreateHSCodeRequest, BulkCreateHSCodeResponse, UpdateHSCodeRequest, PaginatedResponse } from '@/types/api';
 
 export interface GetHSCodesParams {
   page?: number;
@@ -28,10 +28,14 @@ export const hsCodeService = {
   },
 
   /**
-   * Create a new HS code
+   * Create HS code(s) - supports both single and bulk operations
    */
-  async createHSCode(data: CreateHSCodeRequest): Promise<HSCode> {
+  async createHSCode(data: CreateHSCodeRequest | BulkCreateHSCodeRequest): Promise<HSCode | BulkCreateHSCodeResponse> {
     const response = await axiosInstance.post('/v1/hs-codes', data);
+    // Check if this is a bulk response
+    if ('hsCodes' in data) {
+      return response.data.data as BulkCreateHSCodeResponse;
+    }
     return response.data.data.hsCode;
   },
 

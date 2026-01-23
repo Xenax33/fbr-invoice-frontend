@@ -112,11 +112,14 @@ export function middleware(request: NextRequest) {
   // Add Content Security Policy headers
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.emailjs.com;
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://fonts.googleapis.com https://cdn.emailjs.com;
+    script-src-elem 'self' 'unsafe-inline' https://cdn.emailjs.com;
+    worker-src 'self' blob:;
+    child-src 'self' blob:;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com data:;
     img-src 'self' data: https: blob:;
-    connect-src 'self' https://api.emailjs.com https://gw.fbr.gov.pk ${process.env.NEXT_PUBLIC_API_URL || '*'};
+    connect-src 'self' data: blob: https://api.emailjs.com https://gw.fbr.gov.pk ${process.env.NEXT_PUBLIC_API_URL || '*'};
     frame-src 'self';
     object-src 'none';
     base-uri 'self';

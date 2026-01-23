@@ -21,19 +21,54 @@ import {
   CheckCircle,
   AlertCircle,
   Eye,
-  Filter
+  Filter,
+  Download,
+  Printer
 } from 'lucide-react';
+import { InvoicePDF } from '@/components/InvoicePDF';
+import { downloadInvoicePDF, printInvoicePDF } from '@/lib/pdf-utils';
 
 export default function InvoicesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [environmentFilter, setEnvironmentFilter] = useState<'ALL' | 'TEST' | 'PRODUCTION'>('ALL');
+
+  // Helper function to get validation status from FBR response
+  const getValidationStatus = (fbrResponse: any): { status: string; message?: string } => {
+    if (!fbrResponse) return { status: 'unknown' };
+    
+    // Check validationResponse field
+    if (fbrResponse.validationResponse) {
+      const status = fbrResponse.validationResponse.status?.toLowerCase();
+      const error = fbrResponse.validationResponse.error;
+      const invoiceStatuses = fbrResponse.validationResponse.invoiceStatuses;
+      
+      if (status === 'valid') {
+        return { status: 'valid' };
+      } else if (status === 'invalid') {
+        // Get first error message if available
+        const errorMsg = invoiceStatuses?.[0]?.error || error || 'Validation failed';
+        return { status: 'invalid', message: errorMsg };
+      }
+    }
+    
+    // Fallback: check if there's an invoiceNumber in response (usually means success)
+    if (fbrResponse.invoiceNumber || fbrResponse.InvoiceNumber) {
+      return { status: 'valid' };
+    }
+    
+    return { status: 'unknown' };
+  };
   
   // Modal states
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<any | null>(null);
+  
+  // PDF generation states
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [isPrinting, setIsPrinting] = useState(false);
 
   // Form state for creating invoice
   const [formData, setFormData] = useState<CreateInvoiceRequest>({
@@ -147,6 +182,41 @@ export default function InvoicesPage() {
     await deleteInvoice.mutateAsync(selectedInvoice.id);
     setShowDeleteModal(false);
     setSelectedInvoice(null);
+  };
+
+  // Download invoice as PDF
+  const handleDownloadPDF = async () => {
+    if (!selectedInvoice) return;
+    
+    setIsGeneratingPDF(true);
+    try {
+      const pdfComponent = <InvoicePDF invoice={selectedInvoice} />;
+      const fileName = `Invoice_${selectedInvoice.fbrInvoiceNumber || selectedInvoice.id}_${new Date().toISOString().split('T')[0]}.pdf`;
+      
+      await downloadInvoicePDF(pdfComponent, fileName);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      alert('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
+  // Print invoice
+  const handlePrintInvoice = async () => {
+    if (!selectedInvoice) return;
+    
+    setIsPrinting(true);
+    try {
+      const pdfComponent = <InvoicePDF invoice={selectedInvoice} />;
+      
+      await printInvoicePDF(pdfComponent);
+    } catch (error) {
+      console.error('Error printing PDF:', error);
+      alert('Failed to print invoice. Please try again.');
+    } finally {
+      setIsPrinting(false);
+    }
   };
 
   // Reset form
@@ -301,6 +371,9 @@ export default function InvoicesPage() {
                     <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider hidden sm:table-cell">
                       Environment
                     </th>
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider hidden lg:table-cell">
+                      Status
+                    </th>
                     <th className="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
                       Actions
                     </th>
@@ -346,6 +419,33 @@ export default function InvoicesPage() {
                             Production
                           </span>
                         )}
+                      </td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 hidden lg:table-cell">
+                        {(() => {
+                          const validation = getValidationStatus(invoice.fbrResponse);
+                          if (validation.status === 'valid') {
+                            return (
+                              <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800" title="Invoice validated successfully">
+                                <CheckCircle className="h-3 w-3 mr-1" />
+                                Valid
+                              </span>
+                            );
+                          } else if (validation.status === 'invalid') {
+                            return (
+                              <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-semibold text-red-800" title={validation.message}>
+                                <AlertCircle className="h-3 w-3 mr-1" />
+                                Invalid
+                              </span>
+                            );
+                          } else {
+                            return (
+                              <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
+                                <AlertCircle className="h-3 w-3 mr-1" />
+                                Unknown
+                              </span>
+                            );
+                          }
+                        })()}
                       </td>
                       <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-right">
                         <div className="flex items-center justify-end gap-1 sm:gap-2">
@@ -768,12 +868,31 @@ export default function InvoicesPage() {
           <div className="max-h-[95vh] w-full max-w-5xl overflow-y-auto rounded-xl sm:rounded-2xl bg-white shadow-2xl border-2 border-slate-200 my-8">
             {/* Header */}
             <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 py-4 sm:py-5 rounded-t-xl sm:rounded-t-2xl border-b-2 border-blue-700 z-10">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <h3 className="text-lg sm:text-2xl font-bold text-white flex items-center">
                   <FileText className="h-6 w-6 sm:h-7 sm:w-7 mr-2" />
                   Invoice Details
                 </h3>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {/* PDF Action Buttons */}
+                  <button
+                    onClick={handleDownloadPDF}
+                    disabled={isGeneratingPDF}
+                    className="inline-flex items-center rounded-lg bg-white/10 hover:bg-white/20 border-2 border-white/30 px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Download className="h-3.5 w-3.5 mr-1.5" />
+                    {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
+                  </button>
+                  <button
+                    onClick={handlePrintInvoice}
+                    disabled={isPrinting}
+                    className="inline-flex items-center rounded-lg bg-white/10 hover:bg-white/20 border-2 border-white/30 px-3 py-1.5 text-xs font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Printer className="h-3.5 w-3.5 mr-1.5" />
+                    {isPrinting ? 'Printing...' : 'Print'}
+                  </button>
+                  
+                  {/* Environment Badge */}
                   {selectedInvoice.isTestEnvironment ? (
                     <span className="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800 border border-amber-300">
                       <AlertCircle className="h-3 w-3 mr-1.5" />
@@ -935,13 +1054,53 @@ export default function InvoicesPage() {
 
               {/* FBR Response Section */}
               {selectedInvoice.fbrResponse && Object.keys(selectedInvoice.fbrResponse).length > 0 && (
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-4 sm:p-5">
-                  <h4 className="text-sm font-bold text-purple-900 mb-3 flex items-center">
-                    <CheckCircle className="h-4 w-4 mr-2 text-purple-600" />
-                    FBR Response
-                  </h4>
-                  <div className="bg-white rounded-lg p-3 border border-purple-100 text-xs font-mono text-slate-700 overflow-x-auto max-h-48 overflow-y-auto">
-                    <pre>{JSON.stringify(selectedInvoice.fbrResponse, null, 2)}</pre>
+                <div>
+                  {/* Validation Status Banner */}
+                  {(() => {
+                    const validation = getValidationStatus(selectedInvoice.fbrResponse);
+                    if (validation.status === 'valid') {
+                      return (
+                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4 sm:p-5 mb-4">
+                          <div className="flex items-start">
+                            <CheckCircle className="h-6 w-6 text-green-600 mr-3 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                              <h4 className="text-base font-bold text-green-900 mb-1">Invoice Validated Successfully</h4>
+                              <p className="text-sm text-green-700">This invoice has been validated and accepted by FBR.</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    } else if (validation.status === 'invalid') {
+                      return (
+                        <div className="bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-200 rounded-xl p-4 sm:p-5 mb-4">
+                          <div className="flex items-start">
+                            <AlertCircle className="h-6 w-6 text-red-600 mr-3 flex-shrink-0 mt-0.5\" />
+                            <div className="flex-1">
+                              <h4 className="text-base font-bold text-red-900 mb-1">Invoice Validation Failed</h4>
+                              <p className="text-sm text-red-700 mb-2">This invoice was rejected by FBR due to validation errors.</p>
+                              {validation.message && (
+                                <div className="bg-white border border-red-200 rounded-lg p-3 mt-2">
+                                  <p className="text-xs font-semibold text-red-800 mb-1">Error Details:</p>
+                                  <p className="text-xs text-red-700">{validation.message}</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
+
+                  {/* Full FBR Response */}
+                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-4 sm:p-5">
+                    <h4 className="text-sm font-bold text-purple-900 mb-3 flex items-center">
+                      <CheckCircle className="h-4 w-4 mr-2 text-purple-600" />
+                      Full FBR Response
+                    </h4>
+                    <div className="bg-white rounded-lg p-3 border border-purple-100 text-xs font-mono text-slate-700 overflow-x-auto max-h-48 overflow-y-auto">
+                      <pre>{JSON.stringify(selectedInvoice.fbrResponse, null, 2)}</pre>
+                    </div>
                   </div>
                 </div>
               )}

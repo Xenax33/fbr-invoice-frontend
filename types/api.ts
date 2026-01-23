@@ -130,6 +130,26 @@ export interface CreateHSCodeRequest {
   description?: string;
 }
 
+export interface BulkCreateHSCodeRequest {
+  hsCodes: Array<{
+    hsCode: string;
+    description?: string;
+  }>;
+}
+
+export interface BulkCreateHSCodeResponse {
+  summary: {
+    total: number;
+    created: number;
+    failed: number;
+  };
+  created: Array<HSCode>;
+  failed: Array<{
+    hsCode: string;
+    error: string;
+  }>;
+}
+
 export interface UpdateHSCodeRequest {
   description?: string;
 }

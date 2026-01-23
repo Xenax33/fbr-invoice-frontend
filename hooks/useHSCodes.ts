@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { hsCodeService, GetHSCodesParams } from '@/services/hsCode.service';
-import type { HSCode, CreateHSCodeRequest, UpdateHSCodeRequest, PaginatedResponse } from '@/types/api';
+import type { HSCode, CreateHSCodeRequest, BulkCreateHSCodeRequest, BulkCreateHSCodeResponse, UpdateHSCodeRequest, PaginatedResponse } from '@/types/api';
 import toast from 'react-hot-toast';
 
 // Helper function to handle API errors with validation messages
@@ -52,16 +52,27 @@ export function useHSCode(id: string) {
 }
 
 /**
- * Hook to create a new HS code
+ * Hook to create a new HS code (supports both single and bulk)
  */
 export function useCreateHSCode() {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (data: CreateHSCodeRequest) => hsCodeService.createHSCode(data),
-    onSuccess: () => {
+  return useMutation<HSCode | BulkCreateHSCodeResponse, Error, CreateHSCodeRequest | BulkCreateHSCodeRequest>({
+    mutationFn: (data) => hsCodeService.createHSCode(data),
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: hsCodeKeys.lists() });
-      toast.success('HS Code created successfully');
+      
+      // Check if bulk response
+      if ('summary' in result) {
+        const { created, failed } = result.summary;
+        if (failed > 0) {
+          toast.success(`${created} HS codes created successfully. ${failed} failed.`);
+        } else {
+          toast.success(`${created} HS codes created successfully`);
+        }
+      } else {
+        toast.success('HS Code created successfully');
+      }
     },
     onError: (error: any) => {
       handleApiError(error, 'Failed to create HS code');

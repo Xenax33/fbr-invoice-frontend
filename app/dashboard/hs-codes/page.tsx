@@ -175,21 +175,13 @@ export default function HSCodesPage() {
       });
 
       // Handle response from bulk API
-      const created = result?.data?.created?.length || 0;
-      const failed = result?.data?.failed?.length || 0;
-
-      if (created > 0) {
-        toast.success(`Successfully added ${created} HS code(s)`);
-      }
-      if (failed > 0) {
-        toast.error(`Failed to add ${failed} HS code(s) (may already exist)`);
-      }
-
+      // The hook already shows toast notifications based on the response
       setShowFBRModal(false);
       setSelectedFBRCodes(new Set());
       setFbrSearch('');
     } catch (error: any) {
-      toast.error('Failed to add HS codes. Please try again.');
+      // Error already handled by the hook
+      console.error('Failed to add HS codes:', error);
     }
   };
 
