@@ -53,8 +53,8 @@ export async function GET(request: NextRequest) {
     // Return the FBR response
     return NextResponse.json(data, { status: 200 });
 
-  } catch (error: any) {
-    if (error.name === 'AbortError' || error.name === 'TimeoutError') {
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && ('name' in error) && (error.name === 'AbortError' || error.name === 'TimeoutError')) {
       return NextResponse.json(
         { 
           error: 'Request timeout',
@@ -64,11 +64,14 @@ export async function GET(request: NextRequest) {
       );
     }
     
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch HS codes';
+    const errorType = error && typeof error === 'object' && 'constructor' in error && error.constructor ? error.constructor.name : 'Error';
+    
     return NextResponse.json(
       { 
         error: 'Internal server error',
-        message: error.message || 'Failed to fetch HS codes',
-        type: error.constructor.name
+        message: errorMessage,
+        type: errorType
       },
       { status: 500 }
     );

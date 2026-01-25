@@ -33,7 +33,7 @@ export const invoiceService = {
   /**
    * Create and post a new invoice to FBR
    */
-  async createInvoice(data: CreateInvoiceRequest): Promise<{ invoice: Invoice; fbrResponse: any }> {
+  async createInvoice(data: CreateInvoiceRequest): Promise<{ invoice: Invoice; fbrResponse: Record<string, unknown> }> {
     const response = await axiosInstance.post('/v1/invoices', data);
     return response.data.data;
   },

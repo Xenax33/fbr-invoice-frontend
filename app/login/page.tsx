@@ -1,6 +1,5 @@
 'use client';
 
-import type { Metadata } from 'next';
 import { useState, FormEvent } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -161,7 +160,7 @@ export default function LoginPage() {
           </div>
 
           <p className="mt-8 text-center text-sm text-stone-500">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/contact" className="font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
               Contact us to register
             </Link>

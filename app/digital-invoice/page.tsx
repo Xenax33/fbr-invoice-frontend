@@ -4,7 +4,17 @@ import { CTAButton, FeatureCard } from '@/components/ui/Cards';
 export const metadata: Metadata = {
   title: 'Digital Invoice Services | Saad Traders - FBR Compliant Invoicing',
   description: 'Create, manage, and validate FBR-compliant digital invoices with Saad Traders. Streamline your invoicing process with our advanced digital invoice platform.',
-  keywords: 'FBR invoice, digital invoice Pakistan, FBR compliant invoicing, invoice management, tax compliant invoice',
+  keywords: [
+    'FBR invoice Pakistan',
+    'FBR compliant invoicing',
+    'digital invoice Pakistan',
+    'Pakistan e-invoicing',
+    'create FBR invoice',
+    'sales tax invoice FBR',
+  ],
+  alternates: {
+    canonical: 'https://saadtraders.com/digital-invoice',
+  },
   openGraph: {
     title: 'Digital Invoice Services - Saad Traders',
     description: 'FBR-compliant digital invoicing solutions for your business',

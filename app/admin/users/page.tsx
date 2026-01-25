@@ -70,7 +70,7 @@ export default function UsersPage() {
 
   // Build query params
   const queryParams = useMemo(() => {
-    const params: any = {
+    const params: Record<string, string | number | boolean> = {
       page: currentPage,
       limit: 10,
     };
@@ -248,7 +248,7 @@ export default function UsersPage() {
               <select
                 value={roleFilter}
                 onChange={(e) => {
-                  setRoleFilter(e.target.value as any);
+                  setRoleFilter(e.target.value as 'ALL' | 'ADMIN' | 'USER');
                   setCurrentPage(1);
                 }}
                 className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
@@ -265,7 +265,7 @@ export default function UsersPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => {
-                  setStatusFilter(e.target.value as any);
+                  setStatusFilter(e.target.value as 'ALL' | 'ACTIVE' | 'INACTIVE');
                   setCurrentPage(1);
                 }}
                 className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"

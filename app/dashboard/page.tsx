@@ -3,7 +3,7 @@
 import UserLayout from '@/components/layouts/UserLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
-import { Users, Package, FileBarChart, ArrowRight, Plus, CheckCircle, AlertCircle, TrendingUp, Building2, MapPin } from 'lucide-react';
+import { Users, Package, FileBarChart, ArrowRight, CheckCircle, AlertCircle, TrendingUp, Building2, MapPin } from 'lucide-react';
 
 export default function UserDashboard() {
   const { user } = useAuth();

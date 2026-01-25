@@ -3,7 +3,7 @@
 import { useLoading } from '@/contexts/LoadingContext';
 
 export default function GlobalLoader() {
-  const { isLoading, loadingMessage } = useLoading();
+  const { isLoading } = useLoading();
 
   if (!isLoading) return null;
 

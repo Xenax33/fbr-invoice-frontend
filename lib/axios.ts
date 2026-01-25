@@ -149,13 +149,13 @@ export const apiClient = {
   get: <T>(url: string, config?: AxiosRequestConfig) =>
     axiosInstance.get<T>(url, config),
 
-  post: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
+  post: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
     axiosInstance.post<T>(url, data, config),
 
-  put: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
+  put: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
     axiosInstance.put<T>(url, data, config),
 
-  patch: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
+  patch: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
     axiosInstance.patch<T>(url, data, config),
 
   delete: <T>(url: string, config?: AxiosRequestConfig) =>

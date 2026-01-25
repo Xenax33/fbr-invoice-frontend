@@ -34,7 +34,7 @@ function decodeJWT(token: string): DecodedToken | null {
         .join('')
     );
     return JSON.parse(jsonPayload);
-  } catch (error) {
+  } catch {
     return null;
   }
 }

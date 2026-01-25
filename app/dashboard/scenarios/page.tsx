@@ -1,7 +1,7 @@
 "use client";
 
 import UserLayout from "@/components/layouts/UserLayout";
-import { Loader2, Layers, FileText } from "lucide-react";
+import { Layers, FileText } from "lucide-react";
 import { useMyScenarios } from "@/hooks/useScenarios";
 
 export default function ScenariosPage() {

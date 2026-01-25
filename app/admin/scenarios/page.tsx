@@ -30,6 +30,7 @@ export default function AdminScenariosPage() {
     scenarioCode: '',
     scenarioDescription: '',
     salesType: '',
+    fbrId: undefined as number | undefined,
   });
 
   const { data: scenariosResponse, isLoading } = useGlobalScenarios();
@@ -47,7 +48,7 @@ export default function AdminScenariosPage() {
   );
 
   const handleCreate = () => {
-    setFormData({ scenarioCode: '', scenarioDescription: '', salesType: '' });
+    setFormData({ scenarioCode: '', scenarioDescription: '', salesType: '', fbrId: undefined });
     setIsCreateModalOpen(true);
   };
 
@@ -57,6 +58,7 @@ export default function AdminScenariosPage() {
       scenarioCode: scenario.scenarioCode,
       scenarioDescription: scenario.scenarioDescription,
       salesType: scenario.salesType || '',
+      fbrId: scenario.fbrId,
     });
     setIsEditModalOpen(true);
   };
@@ -151,6 +153,11 @@ export default function AdminScenariosPage() {
                     <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-100">
                       {scenario.salesType || '—'}
                     </span>
+                    {scenario.fbrId && (
+                      <span className="inline-flex items-center rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700 border border-purple-100">
+                        FBR ID: {scenario.fbrId}
+                      </span>
+                    )}
                     <span className="text-sm text-gray-400">
                       Created: {new Date(scenario.createdAt).toLocaleDateString()}
                     </span>
@@ -256,17 +263,16 @@ export default function AdminScenariosPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Sales Type *
+                  FBR ID
                 </label>
                 <input
-                  type="text"
-                  value={formData.salesType}
+                  type="number"
+                  value={formData.fbrId || ''}
                   onChange={(e) =>
-                    setFormData({ ...formData, salesType: e.target.value })
+                    setFormData({ ...formData, fbrId: e.target.value ? parseInt(e.target.value) : undefined })
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  placeholder="e.g., Goods at Standard Rate (default)"
-                  required
+                  placeholder="e.g., 3"
                 />
               </div>
               <div className="flex gap-3 pt-4">
@@ -351,6 +357,20 @@ export default function AdminScenariosPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   placeholder="e.g., Goods at Standard Rate (default)"
                   required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  FBR ID
+                </label>
+                <input
+                  type="number"
+                  value={formData.fbrId || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fbrId: e.target.value ? parseInt(e.target.value) : undefined })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  placeholder="e.g., 3"
                 />
               </div>
               <div className="flex gap-3 pt-4">

@@ -5,7 +5,7 @@ import { useEffect } from 'react';
  * Hook to show loading state for React Query mutations
  * Usage: useLoadingMutation(mutation, 'Creating invoice...')
  */
-export function useLoadingMutation(mutation: any, message?: string) {
+export function useLoadingMutation(mutation: { isPending: boolean }, message?: string) {
   const { showLoading, hideLoading } = useLoading();
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export function useLoadingMutation(mutation: any, message?: string) {
  * Hook to show loading state for React Query queries
  * Usage: useLoadingQuery(query, 'Loading data...')
  */
-export function useLoadingQuery(query: any, message?: string) {
+export function useLoadingQuery(query: { isLoading: boolean; isFetching: boolean }, message?: string) {
   const { showLoading, hideLoading } = useLoading();
 
   useEffect(() => {

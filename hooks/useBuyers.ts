@@ -4,18 +4,19 @@ import type { Buyer, CreateBuyerRequest, UpdateBuyerRequest, PaginatedResponse }
 import toast from 'react-hot-toast';
 
 // Helper function to handle API errors with validation messages
-const handleApiError = (error: any, defaultMessage: string) => {
-  const response = error.response?.data;
+const handleApiError = (error: unknown, defaultMessage: string) => {
+  const response = error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response ? error.response.data : null;
   
   // Check for validation errors array
-  if (response?.errors && Array.isArray(response.errors)) {
+  if (response && typeof response === 'object' && 'errors' in response && Array.isArray(response.errors)) {
     // Show each validation error
     response.errors.forEach((err: { field: string; message: string }) => {
       toast.error(`${err.field}: ${err.message}`);
     });
   } else {
     // Show general error message
-    toast.error(response?.message || defaultMessage);
+    const message = response && typeof response === 'object' && 'message' in response && typeof response.message === 'string' ? response.message : defaultMessage;
+    toast.error(message);
   }
 };
 
@@ -63,7 +64,7 @@ export function useCreateBuyer() {
       queryClient.invalidateQueries({ queryKey: buyerKeys.lists() });
       toast.success('Buyer created successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       handleApiError(error, 'Failed to create buyer');
     },
   });
@@ -83,7 +84,7 @@ export function useUpdateBuyer() {
       queryClient.invalidateQueries({ queryKey: buyerKeys.detail(variables.id) });
       toast.success('Buyer updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       handleApiError(error, 'Failed to update buyer');
     },
   });
@@ -101,8 +102,8 @@ export function useDeleteBuyer() {
       queryClient.invalidateQueries({ queryKey: buyerKeys.lists() });
       toast.success('Buyer deleted successfully');
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to delete buyer');
+    onError: (error: unknown) => {
+      handleApiError(error, 'Failed to delete buyer');
     },
   });
 }

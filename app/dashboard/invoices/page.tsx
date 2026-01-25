@@ -2,11 +2,13 @@
 
 import { useState, useMemo } from 'react';
 import UserLayout from '@/components/layouts/UserLayout';
+import { useAuth } from '@/contexts/AuthContext';
 import { useInvoices, useCreateInvoice, useDeleteInvoice } from '@/hooks/useInvoices';
 import { useBuyers } from '@/hooks/useBuyers';
 import { useHSCodes } from '@/hooks/useHSCodes';
 import { useMyScenarios } from '@/hooks/useScenarios';
-import type { CreateInvoiceRequest, InvoiceItem } from '@/types/api';
+import type { CreateInvoiceRequest, InvoiceItem, Invoice } from '@/types/api';
+import type { UserAssignedScenario } from '@/services/userScenarios.service';
 import { 
   Plus, 
   Search, 
@@ -15,7 +17,6 @@ import {
   Calendar,
   Building2,
   Package,
-  DollarSign,
   ChevronLeft,
   ChevronRight,
   CheckCircle,
@@ -29,25 +30,50 @@ import { InvoicePDF } from '@/components/InvoicePDF';
 import { downloadInvoicePDF, printInvoicePDF } from '@/lib/pdf-utils';
 
 export default function InvoicesPage() {
+  // Helper function to safely format numbers with 2 decimal places
+  const formatCurrency = (value: unknown): string => {
+    const num = typeof value === 'number' ? value : typeof value === 'string' ? parseFloat(value) : 0;
+    return isNaN(num) ? '0.00' : num.toFixed(2);
+  };
+
+  const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [environmentFilter, setEnvironmentFilter] = useState<'ALL' | 'TEST' | 'PRODUCTION'>('ALL');
+  
+  // UoM state - maps hsCodeId to array of available UoMs
+  const [uomOptions, setUomOptions] = useState<Record<string, Array<{ uoM_ID: number; description: string }>>>({});
+  const [loadingUoM, setLoadingUoM] = useState<Record<string, boolean>>({});
+  
+  // Rate state - maps scenarioId to array of available rates
+  const [rateOptions, setRateOptions] = useState<Record<string, Array<{ ratE_ID: number; ratE_DESC: string; ratE_VALUE: number }>>>({});
+  const [loadingRates, setLoadingRates] = useState<Record<string, boolean>>({});
+  
+  // SRO Schedule state - maps rateId to array of available SRO schedules
+  const [sroScheduleOptions, setSroScheduleOptions] = useState<Record<string, Array<{ srO_ID: number; serNo: number; srO_DESC: string }>>>({});
+  const [loadingSroSchedule, setLoadingSroSchedule] = useState<Record<string, boolean>>({});
+  
+  // SRO Item state - maps sroId to array of available SRO items
+  const [sroItemOptions, setSroItemOptions] = useState<Record<string, Array<{ srO_ITEM_ID: number; srO_ITEM_DESC: string }>>>({});
+  const [loadingSroItems, setLoadingSroItems] = useState<Record<string, boolean>>({});
 
   // Helper function to get validation status from FBR response
-  const getValidationStatus = (fbrResponse: any): { status: string; message?: string } => {
+  const getValidationStatus = (fbrResponse: Record<string, unknown> | null | undefined): { status: string; message?: string } => {
     if (!fbrResponse) return { status: 'unknown' };
     
     // Check validationResponse field
-    if (fbrResponse.validationResponse) {
-      const status = fbrResponse.validationResponse.status?.toLowerCase();
-      const error = fbrResponse.validationResponse.error;
-      const invoiceStatuses = fbrResponse.validationResponse.invoiceStatuses;
+    if (fbrResponse.validationResponse && typeof fbrResponse.validationResponse === 'object') {
+      const validationResponse = fbrResponse.validationResponse as Record<string, unknown>;
+      const status = validationResponse.status && typeof validationResponse.status === 'string' ? validationResponse.status.toLowerCase() : undefined;
+      const error = validationResponse.error;
+      const invoiceStatuses = Array.isArray(validationResponse.invoiceStatuses) ? validationResponse.invoiceStatuses : undefined;
       
       if (status === 'valid') {
         return { status: 'valid' };
       } else if (status === 'invalid') {
         // Get first error message if available
-        const errorMsg = invoiceStatuses?.[0]?.error || error || 'Validation failed';
+        const firstStatus = invoiceStatuses?.[0] as Record<string, unknown> | undefined;
+        const errorMsg = (firstStatus && typeof firstStatus.error === 'string' ? firstStatus.error : undefined) || (typeof error === 'string' ? error : undefined) || 'Validation failed';
         return { status: 'invalid', message: errorMsg };
       }
     }
@@ -64,7 +90,7 @@ export default function InvoicesPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [selectedInvoice, setSelectedInvoice] = useState<any | null>(null);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   
   // PDF generation states
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
@@ -78,6 +104,8 @@ export default function InvoicesPage() {
     scenarioId: '',
     invoiceRefNo: '',
     isTestEnvironment: true,
+    sroScheduleNo: '',
+    sroItemSerialNo: '',
     items: [{
       hsCodeId: '',
       productDescription: '',
@@ -101,7 +129,7 @@ export default function InvoicesPage() {
 
   // Build query params
   const queryParams = useMemo(() => {
-    const params: any = {
+    const params: Record<string, string | number | boolean> = {
       page: currentPage,
       limit: 10,
     };
@@ -162,10 +190,201 @@ export default function InvoicesPage() {
   };
 
   // Update item field
-  const updateItem = (index: number, field: keyof InvoiceItem, value: any) => {
+  const updateItem = (index: number, field: keyof InvoiceItem, value: string | number) => {
     const updatedItems = [...formData.items];
     updatedItems[index] = { ...updatedItems[index], [field]: value };
     setFormData({ ...formData, items: updatedItems });
+  };
+
+  // Fetch UoM options from FBR API when HS code is selected
+  const handleHSCodeChange = async (index: number, hsCodeId: string) => {
+    updateItem(index, 'hsCodeId', hsCodeId);
+    
+    if (!hsCodeId || !user) return;
+    
+    // Find the HS code
+    const selectedHSCode = hsCodes.find(h => h.id === hsCodeId);
+    if (!selectedHSCode?.hsCode) return;
+    
+    const cacheKey = hsCodeId;
+    
+    // Check if we already have UoM data for this HS code
+    if (uomOptions[cacheKey]) return;
+    
+    setLoadingUoM(prev => ({ ...prev, [cacheKey]: true }));
+    
+    try {
+      // Determine which token to use (production first, then test)
+      const token = formData.isTestEnvironment 
+        ? user.postInvoiceTokenTest 
+        : user.postInvoiceToken;
+      
+      if (!token) {
+        console.warn('No token available for UoM API');
+        setLoadingUoM(prev => ({ ...prev, [cacheKey]: false }));
+        return;
+      }
+      
+      const response = await fetch(`/api/fbr/hs-uom?hs_code=${selectedHSCode.hsCode}&annexure_id=1&token=${encodeURIComponent(token)}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch UoM options');
+      }
+      
+      const data: Array<{ uoM_ID: number; description: string }> = await response.json();
+      setUomOptions(prev => ({ ...prev, [cacheKey]: data }));
+      
+      // Auto-select first UoM if available
+      if (data.length > 0) {
+        updateItem(index, 'uoM', data[0].description);
+      }
+    } catch (error) {
+      console.error('Error fetching UoM options:', error);
+    } finally {
+      setLoadingUoM(prev => ({ ...prev, [cacheKey]: false }));
+    }
+  };
+
+  // Fetch rates from FBR API when scenario is selected
+  const handleScenarioChange = async (scenarioId: string) => {
+    setFormData({ ...formData, scenarioId });
+    
+    if (!scenarioId || !user) return;
+    
+    const cacheKey = scenarioId;
+    
+    // Check if we already have rate data for this scenario
+    if (rateOptions[cacheKey]) return;
+    
+    setLoadingRates(prev => ({ ...prev, [cacheKey]: true }));
+    
+    try {
+      // For now, use hardcoded values for the API call (you may need to get these from scenario data)
+      // transTypeId: 24 (provided in requirements)
+      // originationSupplier: 1 (provided in requirements)
+      // date: Today's date in format dd-MmmYYYY
+      const today = new Date();
+      const date = `${String(today.getDate()).padStart(2, '0')}-${today.toLocaleString('en-US', { month: 'short' })}${today.getFullYear()}`;
+      
+      // Determine which token to use (production first, then test)
+      const token = formData.isTestEnvironment 
+        ? user.postInvoiceTokenTest 
+        : user.postInvoiceToken;
+      
+      if (!token) {
+        console.warn('No token available for Rates API');
+        setLoadingRates(prev => ({ ...prev, [cacheKey]: false }));
+        return;
+      }
+      
+      const response = await fetch(`/api/fbr/rates?date=${encodeURIComponent(date)}&transTypeId=24&originationSupplier=1&token=${encodeURIComponent(token)}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch rate options');
+      }
+      
+      const data: Array<{ ratE_ID: number; ratE_DESC: string; ratE_VALUE: number }> = await response.json();
+      setRateOptions(prev => ({ ...prev, [cacheKey]: data }));
+    } catch (error) {
+      console.error('Error fetching rate options:', error);
+    } finally {
+      setLoadingRates(prev => ({ ...prev, [cacheKey]: false }));
+    }
+  };
+
+  // Handle rate selection and fetch SRO schedules
+  const handleRateChange = async (rateDesc: string) => {
+    // Update the rate for all items (using rate description as sent from API)
+    const updatedItems = formData.items.map(item => ({ ...item, rate: rateDesc }));
+    setFormData({ ...formData, items: updatedItems });
+    
+    if (!rateDesc || !user) return;
+    
+    // Find the rate ID using the rate description instead of value
+    const rateId = rateOptions[formData.scenarioId]?.find(r => r.ratE_DESC === rateDesc)?.ratE_ID;
+    if (!rateId) return;
+    
+    // Use rate description as cache key for consistency with dropdown
+    const cacheKey = rateDesc;
+    
+    // Check if we already have SRO schedule data for this rate
+    if (sroScheduleOptions[cacheKey]) return;
+    
+    setLoadingSroSchedule(prev => ({ ...prev, [cacheKey]: true }));
+    
+    try {
+      // Date format: dd-MmmYYYY (e.g., "04-Feb2024")
+      const today = new Date();
+      const date = `${String(today.getDate()).padStart(2, '0')}-${today.toLocaleString('en-US', { month: 'short' })}${today.getFullYear()}`;
+      
+      // Determine which token to use
+      const token = formData.isTestEnvironment 
+        ? user.postInvoiceTokenTest 
+        : user.postInvoiceToken;
+      
+      if (!token) {
+        console.warn('No token available for SRO Schedule API');
+        setLoadingSroSchedule(prev => ({ ...prev, [cacheKey]: false }));
+        return;
+      }
+      
+      const response = await fetch(`/api/fbr/sro-schedule?rate_id=${rateId}&date=${encodeURIComponent(date)}&origination_supplier_csv=1&token=${encodeURIComponent(token)}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch SRO Schedule options');
+      }
+      
+      const data: Array<{ srO_ID: number; serNo: number; srO_DESC: string }> = await response.json();
+      setSroScheduleOptions(prev => ({ ...prev, [cacheKey]: data }));
+    } catch (error) {
+      console.error('Error fetching SRO Schedule options:', error);
+    } finally {
+      setLoadingSroSchedule(prev => ({ ...prev, [cacheKey]: false }));
+    }
+  };
+
+  // Handle SRO schedule selection and fetch SRO items
+  const handleSroScheduleChange = async (sroId: string) => {
+    setFormData({ ...formData, sroScheduleNo: sroId });
+    
+    if (!sroId || !user) return;
+    
+    const cacheKey = sroId;
+    
+    // Check if we already have SRO item data for this schedule
+    if (sroItemOptions[cacheKey]) return;
+    
+    setLoadingSroItems(prev => ({ ...prev, [cacheKey]: true }));
+    
+    try {
+      // Date format: YYYY-MM-DD (e.g., "2026-01-20")
+      const today = new Date();
+      const date = today.toISOString().split('T')[0];
+      
+      // Determine which token to use
+      const token = formData.isTestEnvironment 
+        ? user.postInvoiceTokenTest 
+        : user.postInvoiceToken;
+      
+      if (!token) {
+        console.warn('No token available for SRO Items API');
+        setLoadingSroItems(prev => ({ ...prev, [cacheKey]: false }));
+        return;
+      }
+      
+      const response = await fetch(`/api/fbr/sro-items?date=${encodeURIComponent(date)}&sro_id=${sroId}&token=${encodeURIComponent(token)}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch SRO Item options');
+      }
+      
+      const data: Array<{ srO_ITEM_ID: number; srO_ITEM_DESC: string }> = await response.json();
+      setSroItemOptions(prev => ({ ...prev, [cacheKey]: data }));
+    } catch (error) {
+      console.error('Error fetching SRO Item options:', error);
+    } finally {
+      setLoadingSroItems(prev => ({ ...prev, [cacheKey]: false }));
+    }
   };
 
   // Create invoice
@@ -228,6 +447,8 @@ export default function InvoicesPage() {
       scenarioId: '',
       invoiceRefNo: '',
       isTestEnvironment: true,
+      sroScheduleNo: '',
+      sroItemSerialNo: '',
       items: [{
         hsCodeId: '',
         productDescription: '',
@@ -251,13 +472,13 @@ export default function InvoicesPage() {
   };
 
   // Open details modal
-  const openDetailsModal = (invoice: any) => {
+  const openDetailsModal = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
     setShowDetailsModal(true);
   };
 
   // Open delete modal
-  const openDeleteModal = (invoice: any) => {
+  const openDeleteModal = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
     setShowDeleteModal(true);
   };
@@ -380,7 +601,7 @@ export default function InvoicesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
-                  {invoices.map((invoice: any) => (
+                  {invoices.map((invoice: Invoice) => (
                     <tr key={invoice.id} className="hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50 transition-all duration-200 group">
                       <td className="px-4 sm:px-6 py-3 sm:py-4">
                         <div className="flex items-center">
@@ -576,11 +797,11 @@ export default function InvoicesPage() {
                     <select
                       required
                       value={formData.scenarioId}
-                      onChange={(e) => setFormData({ ...formData, scenarioId: e.target.value })}
+                      onChange={(e) => handleScenarioChange(e.target.value)}
                       className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     >
                       <option value="">Select Scenario</option>
-                      {scenarios.map((scenario: any) => (
+                      {scenarios.map((scenario: UserAssignedScenario) => (
                         <option key={scenario.scenarioId} value={scenario.scenarioId}>
                           {scenario.scenarioCode} - {scenario.scenarioDescription}
                         </option>
@@ -660,7 +881,7 @@ export default function InvoicesPage() {
                         <select
                           required
                           value={item.hsCodeId}
-                          onChange={(e) => updateItem(index, 'hsCodeId', e.target.value)}
+                          onChange={(e) => handleHSCodeChange(index, e.target.value)}
                           className="w-full rounded-lg border-2 border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         >
                           <option value="">Select HS Code</option>
@@ -689,28 +910,40 @@ export default function InvoicesPage() {
                         <label className="block text-xs font-semibold text-slate-700 mb-1">
                           Rate <span className="text-red-500">*</span>
                         </label>
-                        <input
-                          type="text"
+                        <select
                           required
                           value={item.rate}
-                          onChange={(e) => updateItem(index, 'rate', e.target.value)}
-                          className="w-full rounded-lg border-2 border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                          placeholder="17%"
-                        />
+                          onChange={(e) => handleRateChange(e.target.value)}
+                          disabled={!formData.scenarioId || loadingRates[formData.scenarioId]}
+                          className="w-full rounded-lg border-2 border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-100 disabled:cursor-not-allowed"
+                        >
+                          <option value="">{loadingRates[formData.scenarioId] ? 'Loading Rates...' : 'Select Rate'}</option>
+                          {rateOptions[formData.scenarioId]?.map((rate) => (
+                            <option key={rate.ratE_ID} value={rate.ratE_DESC}>
+                              {rate.ratE_DESC}
+                            </option>
+                          ))}
+                        </select>
                       </div>
 
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">
                           UoM <span className="text-red-500">*</span>
                         </label>
-                        <input
-                          type="text"
+                        <select
                           required
                           value={item.uoM}
                           onChange={(e) => updateItem(index, 'uoM', e.target.value)}
-                          className="w-full rounded-lg border-2 border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                          placeholder="PCS"
-                        />
+                          disabled={!item.hsCodeId || loadingUoM[item.hsCodeId]}
+                          className="w-full rounded-lg border-2 border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-100 disabled:cursor-not-allowed"
+                        >
+                          <option value="">{loadingUoM[item.hsCodeId] ? 'Loading UoM...' : 'Select UoM'}</option>
+                          {uomOptions[item.hsCodeId]?.map((uom) => (
+                            <option key={uom.uoM_ID} value={uom.description}>
+                              {uom.description}
+                            </option>
+                          ))}
+                        </select>
                       </div>
 
                       <div>
@@ -756,7 +989,7 @@ export default function InvoicesPage() {
 
                       <div>
                         <label className="block text-xs font-semibold text-slate-700 mb-1">
-                          Retail Price <span className="text-red-500">*</span>
+                          Retail Price
                         </label>
                         <input
                           type="number"
@@ -832,6 +1065,46 @@ export default function InvoicesPage() {
                           onChange={(e) => updateItem(index, 'discount', parseFloat(e.target.value))}
                           className="w-full rounded-lg border-2 border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                         />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          SRO Schedule <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          required
+                          value={formData.sroScheduleNo}
+                          onChange={(e) => handleSroScheduleChange(e.target.value)}
+                          disabled={!item.rate || loadingSroSchedule[item.rate]}
+                          className="w-full rounded-lg border-2 border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-100 disabled:cursor-not-allowed"
+                        >
+                          <option value="">{loadingSroSchedule[item.rate] ? 'Loading Schedules...' : 'Select SRO Schedule'}</option>
+                          {sroScheduleOptions[item.rate]?.map((schedule) => (
+                            <option key={schedule.srO_ID} value={String(schedule.srO_ID)}>
+                              {schedule.srO_DESC}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          SRO Item Serial No <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          required
+                          value={formData.sroItemSerialNo}
+                          onChange={(e) => setFormData({ ...formData, sroItemSerialNo: e.target.value })}
+                          disabled={!formData.sroScheduleNo || Boolean(formData.sroScheduleNo && loadingSroItems[formData.sroScheduleNo])}
+                          className="w-full rounded-lg border-2 border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:bg-slate-100 disabled:cursor-not-allowed"
+                        >
+                          <option value="">{formData.sroScheduleNo && loadingSroItems[formData.sroScheduleNo] ? 'Loading Items...' : 'Select SRO Item'}</option>
+                          {formData.sroScheduleNo && sroItemOptions[formData.sroScheduleNo]?.map((item) => (
+                            <option key={item.srO_ITEM_ID} value={item.srO_ITEM_DESC}>
+                              {item.srO_ITEM_DESC}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   </div>
@@ -981,7 +1254,7 @@ export default function InvoicesPage() {
                 </h4>
                 <div className="space-y-3">
                   {selectedInvoice.items && selectedInvoice.items.length > 0 ? (
-                    selectedInvoice.items.map((item: any, index: number) => (
+                    selectedInvoice.items.map((item: InvoiceItem, index: number) => (
                       <div key={index} className="border border-slate-200 rounded-lg p-3 sm:p-4 bg-gradient-to-br from-slate-50 to-slate-100 hover:from-slate-100 hover:to-slate-150 transition-colors duration-200">
                         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                           <div>
@@ -990,7 +1263,7 @@ export default function InvoicesPage() {
                           </div>
                           <div>
                             <label className="text-xs font-semibold text-slate-600">HS Code</label>
-                            <p className="text-sm font-bold text-slate-900 mt-0.5">{item.hsCode?.hsCode || item.hsCode || 'N/A'}</p>
+                            <p className="text-sm font-bold text-slate-900 mt-0.5">{item.hsCode?.hsCode || 'N/A'}</p>
                           </div>
                           <div>
                             <label className="text-xs font-semibold text-slate-600">Rate</label>
@@ -1002,46 +1275,57 @@ export default function InvoicesPage() {
                           </div>
                           <div>
                             <label className="text-xs font-semibold text-slate-600">Total Value</label>
-                            <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {parseFloat(item.totalValues).toFixed(2)}</p>
+                            <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {formatCurrency(item.totalValues)}</p>
                           </div>
                           <div>
                             <label className="text-xs font-semibold text-slate-600">Value (Excl. ST)</label>
-                            <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {parseFloat(item.valueSalesExcludingST).toFixed(2)}</p>
+                            <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {formatCurrency(item.valueSalesExcludingST)}</p>
                           </div>
                           <div>
                             <label className="text-xs font-semibold text-slate-600">Retail Price</label>
-                            <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {parseFloat(item.fixedNotifiedValueOrRetailPrice).toFixed(2)}</p>
+                            <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {formatCurrency(item.fixedNotifiedValueOrRetailPrice)}</p>
                           </div>
                           <div>
                             <label className="text-xs font-semibold text-slate-600">Sales Tax</label>
-                            <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {parseFloat(item.salesTaxApplicable).toFixed(2)}</p>
+                            <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {formatCurrency(item.salesTaxApplicable)}</p>
                           </div>
                           <div>
                             <label className="text-xs font-semibold text-slate-600">Tax Withheld</label>
-                            <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {parseFloat(item.salesTaxWithheldAtSource || 0).toFixed(2)}</p>
+                            <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {formatCurrency(item.salesTaxWithheldAtSource || 0)}</p>
                           </div>
                           {item.furtherTax > 0 && (
                             <div>
                               <label className="text-xs font-semibold text-slate-600">Further Tax</label>
-                              <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {parseFloat(item.furtherTax).toFixed(2)}</p>
+                              <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {formatCurrency(item.furtherTax)}</p>
                             </div>
                           )}
                           {item.discount > 0 && (
                             <div>
                               <label className="text-xs font-semibold text-slate-600">Discount</label>
-                              <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {parseFloat(item.discount).toFixed(2)}</p>
+                              <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {formatCurrency(item.discount)}</p>
                             </div>
                           )}
                           {item.fedPayable > 0 && (
                             <div>
                               <label className="text-xs font-semibold text-slate-600">FED Payable</label>
-                              <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {parseFloat(item.fedPayable).toFixed(2)}</p>
+                              <p className="text-sm font-bold text-slate-900 mt-0.5">Rs. {formatCurrency(item.fedPayable)}</p>
                             </div>
                           )}
                         </div>
-                        {item.sroScheduleNo && (
-                          <div className="mt-2 pt-2 border-t border-slate-200">
-                            <p className="text-xs text-slate-600"><span className="font-semibold">SRO Schedule:</span> {item.sroScheduleNo}</p>
+                        {(item.sroScheduleNo || item.sroItemSerialNo) && (
+                          <div className="mt-2 pt-2 border-t border-slate-200 flex flex-wrap gap-4 text-xs text-slate-600">
+                            {item.sroScheduleNo && (
+                              <p className="flex items-center gap-1">
+                                <span className="font-semibold">SRO Schedule:</span>
+                                <span>{item.sroScheduleNo}</span>
+                              </p>
+                            )}
+                            {item.sroItemSerialNo && (
+                              <p className="flex items-center gap-1">
+                                <span className="font-semibold">SRO Item:</span>
+                                <span>{item.sroItemSerialNo}</span>
+                              </p>
+                            )}
                           </div>
                         )}
                       </div>

@@ -75,7 +75,7 @@ export default function ContactForm() {
             Get in Touch
           </h1>
           <p className="mt-6 text-xl text-white/80 max-w-2xl mx-auto animate-fade-in-up animation-delay-200">
-            Have questions? We're here to help. Reach out to us anytime.
+            Have questions? We&apos;re here to help. Reach out to us anytime.
           </p>
         </div>
 
@@ -94,7 +94,7 @@ export default function ContactForm() {
                 Contact Information
               </h2>
               <p className="text-lg text-stone-600 mb-10">
-                Feel free to reach out through any of the following channels. We're always ready to assist you.
+                Feel free to reach out through any of the following channels. We&apos;re always ready to assist you.
               </p>
 
               <div className="space-y-6">
@@ -201,7 +201,7 @@ export default function ContactForm() {
                     </svg>
                     Message sent successfully!
                   </p>
-                  <p className="text-emerald-700 text-sm mt-1">We'll get back to you soon.</p>
+                  <p className="text-emerald-700 text-sm mt-1">We&apos;ll get back to you soon.</p>
                 </div>
               )}
 
@@ -314,7 +314,7 @@ export default function ContactForm() {
                 </button>
 
                 <p className="text-sm text-stone-500 text-center">
-                  Note: To use this form, you'll need to configure EmailJS with your credentials.
+                  Note: To use this form, you&apos;ll need to configure EmailJS with your credentials.
                 </p>
               </form>
             </div>
@@ -328,7 +328,7 @@ export default function ContactForm() {
           <div className="mx-auto max-w-2xl text-center mb-16 animate-fade-in-up">
             <h2 className="font-display text-4xl font-bold text-stone-900 mb-4">Why Contact Us?</h2>
             <p className="text-xl text-stone-600">
-              We're here to provide the best service and support
+              We&apos;re here to provide the best service and support
             </p>
           </div>
 

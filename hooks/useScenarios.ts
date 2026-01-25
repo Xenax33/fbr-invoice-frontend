@@ -10,14 +10,14 @@ import { userScenariosService, UserAssignedScenario } from "@/services/userScena
 import { Scenario, PaginatedResponse } from "@/types/api";
 
 // Helper function to handle API errors
-const handleApiError = (error: any) => {
-  if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+const handleApiError = (error: unknown) => {
+  if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'errors' in error.response.data && Array.isArray(error.response.data.errors)) {
     // Handle validation errors array
-    error.response.data.errors.forEach((err: any) => {
+    error.response.data.errors.forEach((err: { field: string; message: string }) => {
       toast.error(`${err.field}: ${err.message}`);
     });
   } else {
-    toast.error(error.response?.data?.message || "An error occurred");
+    toast.error(error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data ? String(error.response.data.message) : "An error occurred");
   }
 };
 

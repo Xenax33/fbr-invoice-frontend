@@ -5,7 +5,8 @@ import type { ReactElement } from 'react';
 import QRCode from 'qrcode';
 import type { Invoice } from '@/types/api';
 
-// Type for PDF Document component
+// Type for PDF Document component - using any for react-pdf compatibility
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PDFDocumentComponent = ReactElement<any>;
 
 /**
@@ -58,7 +59,7 @@ export async function downloadInvoicePDF(
   fileName: string
 ): Promise<void> {
   try {
-    const blob = await pdf(invoicePDFComponent as any).toBlob();
+    const blob = await pdf(invoicePDFComponent).toBlob();
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -78,7 +79,7 @@ export async function printInvoicePDF(
   invoicePDFComponent: PDFDocumentComponent
 ): Promise<void> {
   try {
-    const blob = await pdf(invoicePDFComponent as any).toBlob();
+    const blob = await pdf(invoicePDFComponent).toBlob();
     const url = URL.createObjectURL(blob);
     const printWindow = window.open(url, '_blank');
     if (printWindow) {

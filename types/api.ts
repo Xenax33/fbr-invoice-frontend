@@ -1,7 +1,7 @@
 /**
  * Common API response types
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
   success: boolean;
@@ -174,6 +174,7 @@ export interface GlobalScenario {
   scenarioCode: string;
   scenarioDescription: string;
   salesType: string;
+  fbrId?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -182,12 +183,14 @@ export interface CreateGlobalScenarioRequest {
   scenarioCode: string;
   scenarioDescription: string;
   salesType: string;
+  fbrId?: number;
 }
 
 export interface UpdateGlobalScenarioRequest {
   scenarioCode?: string;
   scenarioDescription?: string;
   salesType?: string;
+  fbrId?: number;
 }
 
 export interface AssignScenarioRequest {
@@ -252,7 +255,7 @@ export interface Invoice {
   invoiceDate: string;
   invoiceRefNo: string | null;
   fbrInvoiceNumber: string | null;
-  fbrResponse: any;
+  fbrResponse: Record<string, unknown> | null;
   isTestEnvironment: boolean;
   createdAt: string;
   updatedAt: string;
@@ -269,6 +272,8 @@ export interface CreateInvoiceRequest {
   scenarioId: string;
   invoiceRefNo?: string;
   isTestEnvironment?: boolean;
+  sroScheduleNo?: string;
+  sroItemSerialNo?: string;
   items: InvoiceItem[];
 }
 
@@ -281,6 +286,6 @@ export interface ValidateInvoiceResponse {
   status: string;
   data: {
     invoiceNumber: string;
-    validationResult: any;
+    validationResult: Record<string, unknown>;
   };
 }

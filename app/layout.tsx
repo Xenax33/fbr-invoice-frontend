@@ -26,20 +26,23 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL('https://saadtraders.com'),
   title: {
-    default: "Saad Traders - FBR Digital Invoicing & Premium Textile Supplies",
+    default: "FBR-Compliant Digital Invoicing in Pakistan | Saad Traders",
     template: "%s | Saad Traders"
   },
-  description: "Your trusted partner for FBR-compliant digital invoicing solutions and premium quality stitching threads, dyeing materials, and textile supplies in Pakistan.",
+  description: "FBR-compliant digital invoicing platform for Pakistani businesses. Create, manage, and validate invoices that meet Federal Board of Revenue (FBR) requirements. Premium textile supplies available as a secondary service.",
   keywords: [
     "FBR invoice Pakistan",
-    "digital invoice",
-    "stitching thread Pakistan",
-    "dyeing materials",
-    "textile supplies",
-    "Saad Traders",
     "FBR compliant invoicing",
-    "embroidery thread",
-    "garment supplies Pakistan"
+    "FBR digital invoice",
+    "Pakistan e-invoicing",
+    "FBR sales tax invoice",
+    "FBR POS integration",
+    "create FBR invoice",
+    "digital invoice Pakistan",
+    "Saad Traders",
+    "textile supplies",
+    "stitching thread Pakistan",
+    "dyeing materials"
   ],
   authors: [{ name: "Saad Traders" }],
   creator: "Saad Traders",
@@ -49,16 +52,19 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
+  alternates: {
+    canonical: 'https://saadtraders.com/',
+  },
   openGraph: {
     type: "website",
     locale: "en_PK",
     url: "https://saadtraders.com",
     siteName: "Saad Traders",
-    title: "Saad Traders - FBR Digital Invoicing & Premium Textile Supplies",
-    description: "Your trusted partner for FBR-compliant digital invoicing and premium textile supplies in Pakistan.",
+    title: "FBR-Compliant Digital Invoicing in Pakistan | Saad Traders",
+    description: "Create and validate FBR-compliant digital invoices for Pakistani businesses.",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/opengraph-image.png",
         width: 1200,
         height: 630,
         alt: "Saad Traders",
@@ -67,9 +73,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Saad Traders - FBR Digital Invoicing & Premium Textile Supplies",
-    description: "Your trusted partner for FBR-compliant digital invoicing and premium textile supplies in Pakistan.",
-    images: ["/og-image.jpg"],
+    title: "FBR-Compliant Digital Invoicing in Pakistan | Saad Traders",
+    description: "Create and validate FBR-compliant digital invoices.",
+    images: ["/opengraph-image.png"],
   },
   robots: {
     index: true,
@@ -99,6 +105,44 @@ export default function RootLayout({
         <link rel="canonical" href="https://saadtraders.com" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#047857" />
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Saad Traders",
+              "url": "https://saadtraders.com/",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://saadtraders.com/?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ProfessionalService",
+              "name": "FBR-Compliant Digital Invoicing",
+              "provider": {
+                "@type": "Organization",
+                "name": "Saad Traders",
+                "url": "https://saadtraders.com/"
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Pakistan"
+              },
+              "serviceType": "Digital invoicing compliant with Federal Board of Revenue (FBR)",
+              "url": "https://saadtraders.com/digital-invoice"
+            }),
+          }}
+        />
       </head>
       <body
         className={`${fraunces.variable} ${plusJakartaSans.variable} antialiased`}

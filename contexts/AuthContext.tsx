@@ -67,9 +67,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         throw new Error('Invalid response from server');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Login failed. Please try again.';
+      const errorMessage = error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data ? String(error.response.data.message) : error instanceof Error ? error.message : 'Login failed. Please try again.';
       toast.error(errorMessage);
       throw error;
     }

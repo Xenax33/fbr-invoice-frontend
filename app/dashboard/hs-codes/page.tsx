@@ -51,7 +51,7 @@ export default function HSCodesPage() {
 
   // Build query params
   const queryParams = useMemo(() => {
-    const params: any = {
+    const params: Record<string, string | number> = {
       page: currentPage,
       limit: 10,
     };
@@ -90,8 +90,8 @@ export default function HSCodesPage() {
       setFbrHSCodes(codes);
       setShowFBRModal(true);
       toast.success(`Loaded ${codes.length} HS codes from FBR`);
-    } catch (error: any) {
-      const errorMessage = error.message || 'Failed to fetch HS codes from FBR';
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch HS codes from FBR';
       toast.error(errorMessage);
     } finally {
       setIsFetchingFBR(false);
@@ -170,7 +170,7 @@ export default function HSCodesPage() {
 
     try {
       // Use bulk API endpoint
-      const result = await createHSCode.mutateAsync({
+      await createHSCode.mutateAsync({
         hsCodes: codesToAdd,
       });
 
@@ -179,7 +179,7 @@ export default function HSCodesPage() {
       setShowFBRModal(false);
       setSelectedFBRCodes(new Set());
       setFbrSearch('');
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Error already handled by the hook
       console.error('Failed to add HS codes:', error);
     }

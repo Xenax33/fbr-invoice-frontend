@@ -6,6 +6,7 @@ import {
   AssignScenarioRequest,
   BulkAssignScenarioRequest,
   UnassignScenarioRequest,
+  UserScenarioAssignment,
   ApiResponse,
   PaginatedResponse,
 } from '@/types/api';
@@ -84,7 +85,7 @@ export const adminScenarioService = {
    */
   assignScenarioToUser: async (
     data: AssignScenarioRequest
-  ): Promise<ApiResponse<any>> => {
+  ): Promise<ApiResponse<UserScenarioAssignment>> => {
     const response = await axiosInstance.post('/v1/scenarios/assign', data);
     return response.data;
   },
@@ -95,7 +96,7 @@ export const adminScenarioService = {
    */
   bulkAssignScenarios: async (
     data: BulkAssignScenarioRequest
-  ): Promise<ApiResponse<any>> => {
+  ): Promise<ApiResponse<UserScenarioAssignment>> => {
     // Make individual assignment requests for each scenario
     const results = await Promise.all(
       (data.scenarioIds || []).map((scenarioId) =>
@@ -129,7 +130,7 @@ export const adminScenarioService = {
    */
   getUserAssignments: async (
     userId: string
-  ): Promise<ApiResponse<{ scenarios: any[] }>> => {
+  ): Promise<ApiResponse<{ scenarios: UserScenarioAssignment[] }>> => {
     const response = await axiosInstance.get(
       `/v1/scenarios/user/${userId}`
     );

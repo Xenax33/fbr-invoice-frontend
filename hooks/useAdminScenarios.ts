@@ -63,10 +63,10 @@ export const useCreateGlobalScenario = () => {
       });
       toast.success('Global scenario created successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       hideLoading();
       toast.error(
-        error.response?.data?.message || 'Failed to create global scenario'
+        error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data ? String(error.response.data.message) : 'Failed to create global scenario'
       );
     },
   });
@@ -96,21 +96,21 @@ export const useUpdateGlobalScenario = () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'scenarios', 'global'], exact: false });
 
       // Optimistically update cached lists
-      queryClient.setQueriesData({ queryKey: ['admin', 'scenarios', 'global'], exact: false }, (oldData: any) => {
-        if (!oldData?.data) return oldData;
+      queryClient.setQueriesData({ queryKey: ['admin', 'scenarios', 'global'], exact: false }, (oldData: unknown) => {
+        if (!oldData || typeof oldData !== 'object' || !('data' in oldData)) return oldData;
         const updated = response?.data?.scenario;
         if (!updated) return oldData;
         return {
           ...oldData,
-          data: oldData.data.map((item: any) => (item.id === updated.id ? updated : item)),
+          data: Array.isArray((oldData as { data: unknown[] }).data) ? (oldData as { data: { id: string }[] }).data.map((item: { id: string }) => (item.id === updated.id ? updated : item)) : (oldData as { data: unknown }).data,
         };
       });
       toast.success('Global scenario updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       hideLoading();
       toast.error(
-        error.response?.data?.message || 'Failed to update global scenario'
+        error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data ? String(error.response.data.message) : 'Failed to update global scenario'
       );
     },
   });
@@ -135,10 +135,10 @@ export const useDeleteGlobalScenario = () => {
       });
       toast.success('Global scenario deleted successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       hideLoading();
       const message =
-        error.response?.data?.message || 'Failed to delete global scenario';
+        error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data ? String(error.response.data.message) : 'Failed to delete global scenario';
       toast.error(message);
     },
   });
@@ -163,10 +163,10 @@ export const useAssignScenario = () => {
       });
       toast.success('Scenario assigned successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       hideLoading();
       toast.error(
-        error.response?.data?.message || 'Failed to assign scenario'
+        error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data ? String(error.response.data.message) : 'Failed to assign scenario'
       );
     },
   });
@@ -191,10 +191,10 @@ export const useBulkAssignScenarios = () => {
       });
       toast.success('Scenarios assigned successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       hideLoading();
       toast.error(
-        error.response?.data?.message || 'Failed to bulk assign scenarios'
+        error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data ? String(error.response.data.message) : 'Failed to bulk assign scenarios'
       );
     },
   });
@@ -219,10 +219,10 @@ export const useUnassignScenario = () => {
       });
       toast.success('Scenario unassigned successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       hideLoading();
       const message =
-        error.response?.data?.message || 'Failed to unassign scenario';
+        error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data ? String(error.response.data.message) : 'Failed to unassign scenario';
       toast.error(message);
     },
   });

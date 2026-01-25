@@ -66,7 +66,7 @@ export default function AdminDashboard() {
           <div className="relative z-10">
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold">Welcome back, {user?.name}! 👋</h2>
             <p className="mt-3 text-emerald-100 text-base sm:text-lg lg:text-xl">
-              Here's what's happening with your platform today.
+              Here&apos;s what&apos;s happening with your platform today.
             </p>
           </div>
         </div>

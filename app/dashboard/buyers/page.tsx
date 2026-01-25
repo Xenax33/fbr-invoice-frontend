@@ -51,7 +51,7 @@ export default function BuyersPage() {
 
   // Build query params
   const queryParams = useMemo(() => {
-    const params: any = {
+    const params: Record<string, string | number | boolean> = {
       page: currentPage,
       limit: 10,
     };
@@ -96,7 +96,8 @@ export default function BuyersPage() {
     e.preventDefault();
     if (!selectedBuyer) return;
 
-    const { ntncnic, ...updateData } = formData;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { ntncnic: _ntncnic, ...updateData } = formData;
     await updateBuyer.mutateAsync({ id: selectedBuyer.id, data: updateData });
     setShowEditModal(false);
     resetForm();
@@ -176,7 +177,7 @@ export default function BuyersPage() {
               <select
                 value={registrationFilter}
                 onChange={(e) => {
-                  setRegistrationFilter(e.target.value as any);
+                  setRegistrationFilter(e.target.value as 'ALL' | 'Registered' | 'Unregistered');
                   setCurrentPage(1);
                 }}
                 className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"

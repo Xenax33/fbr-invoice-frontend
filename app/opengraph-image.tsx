@@ -15,7 +15,7 @@ export default async function Image() {
       <div
         style={{
           fontSize: 128,
-          background: 'linear-gradient(to bottom right, #2563eb, #1e40af)',
+          background: 'linear-gradient(to bottom right, #065f46, #0f172a)',
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -38,12 +38,12 @@ export default async function Image() {
               marginRight: 40,
             }}
           >
-            <span style={{ fontSize: 80, fontWeight: 'bold', color: '#2563eb' }}>ST</span>
+            <span style={{ fontSize: 80, fontWeight: 'bold', color: '#065f46' }}>ST</span>
           </div>
           <div style={{ fontSize: 80, fontWeight: 'bold' }}>Saad Traders</div>
         </div>
-        <div style={{ fontSize: 32, marginTop: 20, opacity: 0.9 }}>
-          FBR Invoicing & Textile Supplies
+        <div style={{ fontSize: 40, marginTop: 24, opacity: 0.95, letterSpacing: 1 }}>
+          FBR‑Compliant Digital Invoicing — Pakistan
         </div>
       </div>
     ),

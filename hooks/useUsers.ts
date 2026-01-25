@@ -1,21 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { userService, GetUsersParams, CreateUserRequest, UpdateUserRequest } from "@/services/user.service";
-import type { User } from "@/types/api";
 import toast from 'react-hot-toast';
 
 // Helper function to handle API errors with validation messages
-const handleApiError = (error: any, defaultMessage: string) => {
-  const response = error.response?.data;
+const handleApiError = (error: unknown, defaultMessage: string) => {
+  const response = error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response ? error.response.data : null;
   
   // Check for validation errors array
-  if (response?.errors && Array.isArray(response.errors)) {
+  if (response && typeof response === 'object' && 'errors' in response && Array.isArray(response.errors)) {
     // Show each validation error
     response.errors.forEach((err: { field: string; message: string }) => {
       toast.error(`${err.field}: ${err.message}`);
     });
   } else {
     // Show general error message
-    toast.error(response?.message || defaultMessage);
+    const message = response && typeof response === 'object' && 'message' in response && typeof response.message === 'string' ? response.message : defaultMessage;
+    toast.error(message);
   }
 };
 
@@ -64,7 +64,7 @@ export function useCreateUser() {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       toast.success('User created successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       handleApiError(error, 'Failed to create user');
     },
   });
@@ -84,7 +84,7 @@ export function useUpdateUser() {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       toast.success('User updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       handleApiError(error, 'Failed to update user');
     },
   });
@@ -102,7 +102,7 @@ export function useDeleteUser() {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       toast.success('User deleted successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       handleApiError(error, 'Failed to delete user');
     },
   });
@@ -121,7 +121,7 @@ export function useToggleUserStatus() {
       queryClient.invalidateQueries({ queryKey: userKeys.lists() });
       toast.success('User status updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       handleApiError(error, 'Failed to update user status');
     },
   });
@@ -131,15 +131,13 @@ export function useToggleUserStatus() {
  * Hook to update user password (Admin only)
  */
 export function useUpdateUserPassword() {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: ({ id, password }: { id: string; password: string }) =>
       userService.updateUserPassword(id, { password }),
     onSuccess: () => {
       toast.success('Password updated successfully');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       handleApiError(error, 'Failed to update password');
     },
   });
