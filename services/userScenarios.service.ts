@@ -6,6 +6,7 @@ export interface UserAssignedScenario {
   scenarioId: string;
   scenarioCode: string;
   scenarioDescription: string;
+  salesType: string;
   fbrId?: number;
   assignedAt: string;
 }

@@ -418,14 +418,28 @@ export default function InvoicesPage() {
   const handleCreateInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Get selected scenario and validate salesType
+    const selectedScenario = scenarios.find(s => s.scenarioId === formData.scenarioId);
+    if (!selectedScenario?.salesType) {
+      alert('Sales Type is missing for the selected scenario. Please contact your administrator to configure the Sales Type for this scenario.');
+      return;
+    }
+    
     if (formEnvironmentMode === 'TEST') {
       // Test environment - use regular endpoint with scenarioId
-      await createInvoice.mutateAsync(formData);
+      const salesType = selectedScenario.salesType;
+      
+      const testData = {
+        ...formData,
+        items: formData.items.map(item => ({
+          ...item,
+          saleType: salesType,
+        })),
+      };
+      await createInvoice.mutateAsync(testData);
     } else {
       // Production environment - use production endpoint without scenarioId
-      // Get scenario description for saleType
-      const selectedScenario = scenarios.find(s => s.scenarioId === formData.scenarioId);
-      const saleType = selectedScenario?.scenarioDescription || 'Goods at standard rate (default)';
+      const saleType = selectedScenario.salesType;
       
       const prodData: CreateProductionInvoiceRequest = {
         invoiceType: formData.invoiceType,
