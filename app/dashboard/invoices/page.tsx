@@ -423,6 +423,10 @@ export default function InvoicesPage() {
       await createInvoice.mutateAsync(formData);
     } else {
       // Production environment - use production endpoint without scenarioId
+      // Get scenario description for saleType
+      const selectedScenario = scenarios.find(s => s.scenarioId === formData.scenarioId);
+      const saleType = selectedScenario?.scenarioDescription || 'Goods at standard rate (default)';
+      
       const prodData: CreateProductionInvoiceRequest = {
         invoiceType: formData.invoiceType,
         invoiceDate: formData.invoiceDate,
@@ -430,7 +434,7 @@ export default function InvoicesPage() {
         invoiceRefNo: formData.invoiceRefNo,
         items: formData.items.map(item => ({
           ...item,
-          saleType: item.saleType || 'Goods at standard rate (default)',
+          saleType: saleType,
           // Convert extraTax from string to number for production API
           extraTax: item.extraTax ? parseFloat(item.extraTax) : 0,
         })),
@@ -1172,26 +1176,6 @@ export default function InvoicesPage() {
                           ))}
                         </select>
                       </div>
-
-                      {formEnvironmentMode === 'PRODUCTION' && (
-                        <div className="md:col-span-2 lg:col-span-3">
-                          <label className="block text-xs font-semibold text-slate-700 mb-1">
-                            Sale Type <span className="text-red-500">*</span>
-                            <span className="text-xs font-normal text-emerald-600 ml-2">(Required for Production)</span>
-                          </label>
-                          <input
-                            type="text"
-                            required={formEnvironmentMode === 'PRODUCTION'}
-                            value={item.saleType}
-                            onChange={(e) => updateItem(index, 'saleType', e.target.value)}
-                            className="w-full rounded-lg border-2 border-slate-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                            placeholder="e.g., Goods at standard rate (default)"
-                          />
-                          <p className="mt-1 text-xs text-slate-500">
-                            Specify the type of sale (e.g., "Goods at standard rate (default)")
-                          </p>
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
