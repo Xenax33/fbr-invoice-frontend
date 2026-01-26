@@ -17,12 +17,26 @@ const axiosInstance: AxiosInstance = axios.create({
 /**
  * Request interceptor
  * Add authentication token or other headers here
+ * Public endpoints (MFA enrollment) bypass auth header
  */
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Add auth token if available
+    // Public endpoints that should NOT have Authorization header
+    const publicEndpoints = [
+      '/v1/admin/mfa/enroll/secret',
+      '/v1/admin/mfa/enroll/enable',
+      '/v1/auth/login',
+      '/v1/auth/login/mfa',
+    ];
+
+    // Check if this is a public endpoint
+    const isPublicEndpoint = publicEndpoints.some((endpoint) =>
+      config.url?.includes(endpoint)
+    );
+
+    // Add auth token if available and not a public endpoint
     const accessToken = Cookies.get('accessToken');
-    if (accessToken && config.headers) {
+    if (accessToken && config.headers && !isPublicEndpoint) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
@@ -61,7 +75,22 @@ axiosInstance.interceptors.response.use(
       _retry?: boolean;
     };
 
-    // Handle 401 Unauthorized - Token expired
+    const publicEndpoints = [
+      '/v1/admin/mfa/enroll/secret',
+      '/v1/admin/mfa/enroll/enable',
+      '/v1/auth/login',
+      '/v1/auth/login/mfa',
+    ];
+ 
+    const isPublicEndpoint = publicEndpoints.some((endpoint) =>
+      error.config?.url?.includes(endpoint)
+    );
+
+    if (isPublicEndpoint) {
+      // Do NOT trigger token refresh or redirects for public endpoints
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         // If already refreshing, queue this request
