@@ -14,24 +14,20 @@ export const metadata: Metadata = {
 
 export default function StitchingServicesPage() {
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-slate-950">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-amber-900 via-emerald-900 to-stone-900 text-white">
-        {/* Decorative pattern overlay */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-          }}></div>
+      <section className="relative overflow-hidden bg-slate-950 text-white -mt-25 pt-20">
+        {/* Animated gradient mesh backgrounds */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/20 rounded-full blur-3xl animate-pulse" style={{animationDuration: '8s'}}></div>
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{animationDuration: '10s'}}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-emerald-400/10 rounded-full blur-3xl animate-pulse" style={{animationDuration: '12s'}}></div>
         </div>
-        
-        {/* Decorative blobs */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-amber-600 rounded-full blur-3xl opacity-10"></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-600 rounded-full blur-3xl opacity-10"></div>
         
         <div className="relative mx-auto max-w-7xl px-6 py-32 sm:py-40 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-6 inline-block animate-fade-in-up">
-              <span className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-4 py-2 text-sm font-semibold text-amber-300 border border-amber-500/20 backdrop-blur-sm">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-emerald-300 border border-white/20 backdrop-blur-sm">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
@@ -39,11 +35,11 @@ export default function StitchingServicesPage() {
               </span>
             </div>
             
-            <h1 className="font-display text-5xl font-bold tracking-tight sm:text-6xl mb-8 animate-fade-in-up stagger-1">
-              Premium <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-emerald-400">Stitching Thread</span> & Dyeing Materials
+            <h1 className="font-display text-5xl font-bold tracking-tight sm:text-6xl mb-8 animate-fade-in-up stagger-1 text-white drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">
+              Premium <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Stitching Thread</span> & Dyeing Materials
             </h1>
             
-            <p className="text-lg sm:text-xl leading-relaxed text-stone-300 animate-fade-in-up stagger-2">
+            <p className="text-lg sm:text-xl leading-relaxed text-stone-200/85 animate-fade-in-up stagger-2">
               Your one-stop solution for high-quality stitching threads, dyeing materials, and all textile supplies. We provide everything you need for your garment and textile manufacturing business.
             </p>
             
@@ -73,16 +69,17 @@ export default function StitchingServicesPage() {
       </section>
 
       {/* Product Categories */}
-      <section className="py-24 bg-stone-50">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section className="py-24 bg-slate-950 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent pointer-events-none"></div>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
           <div className="mx-auto max-w-3xl text-center mb-16">
             <div className="inline-block mb-4">
-              <span className="text-sm font-bold text-amber-600 uppercase tracking-wider">Product Range</span>
+              <span className="text-sm font-bold text-emerald-400 uppercase tracking-wider">Product Range</span>
             </div>
-            <h2 className="font-display text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl mb-6">
+            <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl mb-6 drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">
               Our Product Range
             </h2>
-            <p className="text-lg text-stone-600 leading-relaxed">
+            <p className="text-lg text-stone-300/85 leading-relaxed">
               Premium quality materials for all your textile needs
             </p>
           </div>
@@ -152,78 +149,81 @@ export default function StitchingServicesPage() {
       </section>
 
       {/* Quality Assurance */}
-      <section className="py-24 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section className="py-24 bg-slate-900/50 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-3xl"></div>
+        </div>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="relative order-2 lg:order-1">
-              <div className="aspect-square rounded-3xl bg-gradient-to-br from-amber-100 via-emerald-50 to-stone-100 flex items-center justify-center shadow-2xl overflow-hidden group hover:shadow-3xl transition-all">
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-600/5 to-emerald-600/5 group-hover:from-amber-600/10 group-hover:to-emerald-600/10 transition-all"></div>
-                <svg className="h-64 w-64 text-emerald-600 relative z-10 group-hover:scale-110 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={0.5}>
+              <div className="aspect-square rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center shadow-2xl shadow-emerald-900/20 overflow-hidden group hover:shadow-emerald-900/40 transition-all">
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 group-hover:from-emerald-500/20 group-hover:to-cyan-500/20 transition-all"></div>
+                <svg className="h-64 w-64 text-emerald-400 relative z-10 group-hover:scale-110 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={0.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
               </div>
               {/* Decorative elements */}
-              <div className="absolute -top-4 -left-4 w-24 h-24 bg-emerald-400 rounded-full blur-2xl opacity-20"></div>
-              <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-amber-400 rounded-full blur-2xl opacity-20"></div>
+              <div className="absolute -top-4 -left-4 w-24 h-24 bg-cyan-400/30 rounded-full blur-2xl"></div>
+              <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-emerald-400/30 rounded-full blur-2xl"></div>
             </div>
 
             <div className="order-1 lg:order-2">
               <div className="inline-block mb-4">
-                <span className="text-sm font-bold text-amber-600 uppercase tracking-wider">Quality Assurance</span>
+                <span className="text-sm font-bold text-emerald-400 uppercase tracking-wider">Quality Assurance</span>
               </div>
-              <h2 className="font-display text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl mb-6">
+              <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl mb-6 drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">
                 Quality You Can Trust
               </h2>
-              <p className="text-lg text-stone-600 mb-8 leading-relaxed">
+              <p className="text-lg text-stone-300/85 mb-8 leading-relaxed">
                 At Saad Traders, quality is our top priority. We source our materials from trusted manufacturers and conduct rigorous quality checks to ensure you receive only the best.
               </p>
               
               <ul className="space-y-5">
                 <li className="flex items-start group">
-                  <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
-                    <svg className="h-5 w-5 text-emerald-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-emerald-500/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-emerald-500 transition-colors border border-emerald-400/30">
+                    <svg className="h-5 w-5 text-emerald-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <span className="text-stone-700 leading-relaxed">
-                      <strong className="font-bold text-stone-900">100% Authentic:</strong> All products are genuine and sourced from reputable manufacturers
+                    <span className="text-stone-300/85 leading-relaxed">
+                      <strong className="font-bold text-white">100% Authentic:</strong> All products are genuine and sourced from reputable manufacturers
                     </span>
                   </div>
                 </li>
                 <li className="flex items-start group">
-                  <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
-                    <svg className="h-5 w-5 text-emerald-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-emerald-500/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-emerald-500 transition-colors border border-emerald-400/30">
+                    <svg className="h-5 w-5 text-emerald-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <span className="text-stone-700 leading-relaxed">
-                      <strong className="font-bold text-stone-900">Quality Tested:</strong> Every batch undergoes strict quality control procedures
+                    <span className="text-stone-300/85 leading-relaxed">
+                      <strong className="font-bold text-white">Quality Tested:</strong> Every batch undergoes strict quality control procedures
                     </span>
                   </div>
                 </li>
                 <li className="flex items-start group">
-                  <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
-                    <svg className="h-5 w-5 text-emerald-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-emerald-500/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-emerald-500 transition-colors border border-emerald-400/30">
+                    <svg className="h-5 w-5 text-emerald-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <span className="text-stone-700 leading-relaxed">
-                      <strong className="font-bold text-stone-900">Fast Delivery:</strong> Quick and reliable delivery services across Pakistan
+                    <span className="text-stone-300/85 leading-relaxed">
+                      <strong className="font-bold text-white">Fast Delivery:</strong> Quick and reliable delivery services across Pakistan
                     </span>
                   </div>
                 </li>
                 <li className="flex items-start group">
-                  <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-600 transition-colors">
-                    <svg className="h-5 w-5 text-emerald-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <div className="flex-shrink-0 h-8 w-8 rounded-lg bg-emerald-500/20 backdrop-blur-sm flex items-center justify-center group-hover:bg-emerald-500 transition-colors border border-emerald-400/30">
+                    <svg className="h-5 w-5 text-emerald-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div className="ml-4">
-                    <span className="text-stone-700 leading-relaxed">
-                      <strong className="font-bold text-stone-900">Competitive Pricing:</strong> Best prices without compromising on quality
+                    <span className="text-stone-300/85 leading-relaxed">
+                      <strong className="font-bold text-white">Competitive Pricing:</strong> Best prices without compromising on quality
                     </span>
                   </div>
                 </li>
@@ -234,75 +234,78 @@ export default function StitchingServicesPage() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-24 bg-gradient-to-br from-stone-50 to-amber-50/30">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section className="py-24 bg-slate-950 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{animationDuration: '10s'}}></div>
+        </div>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
           <div className="mx-auto max-w-3xl text-center mb-16">
             <div className="inline-block mb-4">
-              <span className="text-sm font-bold text-amber-600 uppercase tracking-wider">For Businesses</span>
+              <span className="text-sm font-bold text-emerald-400 uppercase tracking-wider">For Businesses</span>
             </div>
-            <h2 className="font-display text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl mb-6">
+            <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl mb-6 drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">
               Why Textile Businesses Choose Us
             </h2>
-            <p className="text-lg text-stone-600 leading-relaxed">
+            <p className="text-lg text-stone-300/85 leading-relaxed">
               Trusted by manufacturers and retailers across Pakistan
             </p>
           </div>
 
           <div className="mx-auto mt-16 max-w-5xl">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-              <div className="group hover-lift rounded-3xl border-2 border-stone-200 bg-white p-10 shadow-lg hover:shadow-2xl transition-all hover:border-amber-200">
+              <div className="group hover-lift rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-10 shadow-lg shadow-emerald-900/20 hover:shadow-emerald-900/40 transition-all">
                 <div className="flex items-center mb-6">
-                  <div className="h-12 w-12 rounded-xl bg-amber-100 flex items-center justify-center group-hover:bg-amber-500 transition-colors">
-                    <svg className="h-6 w-6 text-amber-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <div className="h-12 w-12 rounded-xl bg-emerald-500/20 backdrop-blur-sm border border-emerald-400/30 flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
+                    <svg className="h-6 w-6 text-emerald-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </div>
-                  <h3 className="font-display text-2xl font-bold text-stone-900 ml-4">For Manufacturers</h3>
+                  <h3 className="font-display text-2xl font-bold text-white ml-4">For Manufacturers</h3>
                 </div>
-                <ul className="space-y-4 text-stone-700">
+                <ul className="space-y-4 text-stone-300/85">
                   <li className="flex items-start">
-                    <span className="font-bold text-amber-600 mr-3">•</span>
+                    <span className="font-bold text-emerald-400 mr-3">•</span>
                     <span>Consistent quality for large production runs</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="font-bold text-amber-600 mr-3">•</span>
+                    <span className="font-bold text-emerald-400 mr-3">•</span>
                     <span>Bulk pricing and attractive volume discounts</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="font-bold text-amber-600 mr-3">•</span>
+                    <span className="font-bold text-emerald-400 mr-3">•</span>
                     <span>Reliable supply chain management</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="font-bold text-amber-600 mr-3">•</span>
+                    <span className="font-bold text-emerald-400 mr-3">•</span>
                     <span>Technical support and expert guidance</span>
                   </li>
                 </ul>
               </div>
 
-              <div className="group hover-lift rounded-3xl border-2 border-stone-200 bg-white p-10 shadow-lg hover:shadow-2xl transition-all hover:border-emerald-200">
+              <div className="group hover-lift rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-10 shadow-lg shadow-cyan-900/20 hover:shadow-cyan-900/40 transition-all">
                 <div className="flex items-center mb-6">
-                  <div className="h-12 w-12 rounded-xl bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-500 transition-colors">
-                    <svg className="h-6 w-6 text-emerald-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <div className="h-12 w-12 rounded-xl bg-cyan-500/20 backdrop-blur-sm border border-cyan-400/30 flex items-center justify-center group-hover:bg-cyan-500 transition-colors">
+                    <svg className="h-6 w-6 text-cyan-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                   </div>
-                  <h3 className="font-display text-2xl font-bold text-stone-900 ml-4">For Retailers</h3>
+                  <h3 className="font-display text-2xl font-bold text-white ml-4">For Retailers</h3>
                 </div>
-                <ul className="space-y-4 text-stone-700">
+                <ul className="space-y-4 text-stone-300/85">
                   <li className="flex items-start">
-                    <span className="font-bold text-emerald-600 mr-3">•</span>
+                    <span className="font-bold text-cyan-400 mr-3">•</span>
                     <span>Wide variety of products and color options</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="font-bold text-emerald-600 mr-3">•</span>
+                    <span className="font-bold text-cyan-400 mr-3">•</span>
                     <span>Flexible order quantities to suit your needs</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="font-bold text-emerald-600 mr-3">•</span>
+                    <span className="font-bold text-cyan-400 mr-3">•</span>
                     <span>Quick restocking and replenishment services</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="font-bold text-emerald-600 mr-3">•</span>
+                    <span className="font-bold text-cyan-400 mr-3">•</span>
                     <span>Competitive retail pricing and margins</span>
                   </li>
                 </ul>
@@ -313,15 +316,18 @@ export default function StitchingServicesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative bg-gradient-to-br from-amber-700 via-amber-800 to-emerald-950 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDEzNGg5NHYyMEgzNnoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-30"></div>
+      <section className="relative bg-slate-900/50 overflow-hidden border-y border-white/10">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-emerald-500/20 rounded-full blur-3xl animate-pulse" style={{animationDuration: '8s'}}></div>
+          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{animationDuration: '10s'}}></div>
+        </div>
         
         <div className="relative mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl mb-6">
+            <h2 className="font-display text-4xl font-bold tracking-tight text-white sm:text-5xl mb-6 drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">
               Ready to Order Premium Materials?
             </h2>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-amber-100">
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-stone-200/85">
               Contact us today for quotes, bulk orders, or to discuss your specific requirements. Our team is ready to help you succeed.
             </p>
             <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6">

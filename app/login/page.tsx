@@ -111,7 +111,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-slate-950 text-stone-50 flex items-center justify-center px-6 py-12 overflow-hidden">
+    <div className="relative min-h-screen bg-slate-950 text-stone-50 flex items-center justify-center px-6 py-12 overflow-hidden -mt-21 pt-32">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-emerald-500/20 blur-3xl" />
         <div className="absolute right-[-6rem] top-20 h-80 w-80 rounded-full bg-amber-500/20 blur-3xl" />

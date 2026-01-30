@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="relative bg-gradient-to-br from-stone-900 via-stone-800 to-stone-900 text-stone-300">
-      {/* Decorative top border */}
-      <div className="h-1 bg-gradient-to-r from-emerald-600 via-amber-500 to-blue-900"></div>
+    <footer className="relative bg-slate-950 text-stone-300 border-t border-white/10">
+      {/* Decorative top border with gradient */}
+      <div className="h-1 bg-gradient-to-r from-emerald-500 via-cyan-400 to-emerald-500"></div>
       
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
@@ -148,9 +148,9 @@ export default function Footer() {
       </div>
 
       {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-600 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-900 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2 animate-pulse" style={{animationDuration: '8s'}}></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2 animate-pulse" style={{animationDuration: '10s'}}></div>
       </div>
     </footer>
   );

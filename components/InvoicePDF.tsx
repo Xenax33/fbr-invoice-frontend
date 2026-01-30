@@ -418,9 +418,6 @@ export const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice }) => {
             <Text style={[styles.tableColHeader, styles.col6]}>Rate</Text>
             <Text style={[styles.tableColHeader, styles.colSroSchedule]}>SRO Schedule</Text>
             <Text style={[styles.tableColHeader, styles.colSroItem]}>SRO Item</Text>
-            <Text style={[styles.tableColHeader, styles.col7]}>Value (Excl.)</Text>
-            <Text style={[styles.tableColHeader, styles.col8]}>Sales Tax</Text>
-            <Text style={[styles.tableColHeader, styles.col9]}>Total</Text>
           </View>
 
           {/* Table Rows */}
@@ -447,15 +444,6 @@ export const InvoicePDF: React.FC<InvoicePDFProps> = ({ invoice }) => {
               </Text>
               <Text style={[styles.tableCol, styles.colSroItem]}>
                 {item.sroItemSerialNo || '—'}
-              </Text>
-              <Text style={[styles.tableCol, styles.col7]}>
-                Rs. {parseFloat(item.valueSalesExcludingST?.toString() || '0').toFixed(2)}
-              </Text>
-              <Text style={[styles.tableCol, styles.col8]}>
-                Rs. {parseFloat(item.salesTaxApplicable?.toString() || '0').toFixed(2)}
-              </Text>
-              <Text style={[styles.tableCol, styles.col9]}>
-                Rs. {parseFloat(item.totalValues?.toString() || '0').toFixed(2)}
               </Text>
             </View>
           ))}

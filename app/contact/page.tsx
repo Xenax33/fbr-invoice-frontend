@@ -53,14 +53,14 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-slate-950">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-emerald-700 via-blue-900 to-emerald-950 text-white py-24 overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
+      <section className="relative bg-slate-950 text-white py-24 overflow-hidden -mt-25 pt-44">
+        {/* Animated gradient mesh backgrounds */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-500/20 rounded-full blur-3xl animate-pulse" style={{animationDuration: '8s'}}></div>
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{animationDuration: '10s'}}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-emerald-400/10 rounded-full blur-3xl animate-pulse" style={{animationDuration: '12s'}}></div>
         </div>
 
         <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center relative z-10">
@@ -71,35 +71,32 @@ export default function ContactForm() {
             </span>
             <span className="text-sm font-medium text-white/90">Available 24/7</span>
           </div>
-          <h1 className="font-display text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl animate-fade-in-up animation-delay-100">
+          <h1 className="font-display text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl animate-fade-in-up animation-delay-100 text-white drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">
             Get in Touch
           </h1>
-          <p className="mt-6 text-xl text-white/80 max-w-2xl mx-auto animate-fade-in-up animation-delay-200">
+          <p className="mt-6 text-xl text-stone-200/85 max-w-2xl mx-auto animate-fade-in-up animation-delay-200">
             Have questions? We&apos;re here to help. Reach out to us anytime.
           </p>
         </div>
-
-        {/* Decorative Elements */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"></div>
       </section>
 
       {/* Contact Section */}
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section className="py-20 bg-slate-950 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-transparent pointer-events-none"></div>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Contact Information */}
             <div className="animate-fade-in-up animation-delay-300">
-              <h2 className="font-display text-4xl font-bold text-stone-900 mb-6">
+              <h2 className="font-display text-4xl font-bold text-white mb-6 drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">
                 Contact Information
               </h2>
-              <p className="text-lg text-stone-600 mb-10">
+              <p className="text-lg text-stone-300/85 mb-10">
                 Feel free to reach out through any of the following channels. We&apos;re always ready to assist you.
               </p>
 
               <div className="space-y-6">
                 {/* WhatsApp */}
-                <div className="flex items-start group p-6 rounded-2xl bg-white border border-stone-200 shadow-sm hover:shadow-lg hover:border-emerald-200 transition-all duration-300">
+                <div className="flex items-start group p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg shadow-emerald-900/20 hover:shadow-emerald-900/40 transition-all duration-300">
                   <div className="flex-shrink-0">
                     <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg group-hover:shadow-emerald-500/50 group-hover:scale-110 transition-all duration-300">
                       <svg className="h-7 w-7 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -108,23 +105,23 @@ export default function ContactForm() {
                     </div>
                   </div>
                   <div className="ml-5">
-                    <h3 className="text-xl font-semibold text-stone-900 mb-1">WhatsApp</h3>
+                    <h3 className="text-xl font-semibold text-white mb-1">WhatsApp</h3>
                     <a
                       href="https://wa.me/923184489249"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-emerald-600 hover:text-emerald-700 font-medium text-lg transition-colors"
+                      className="text-emerald-400 hover:text-emerald-300 font-medium text-lg transition-colors"
                     >
                       +92 318 4489249
                     </a>
-                    <p className="text-sm text-stone-500 mt-1">Available 24/7 for instant support</p>
+                    <p className="text-sm text-stone-400 mt-1">Available 24/7 for instant support</p>
                   </div>
                 </div>
 
                 {/* Location */}
-                <div className="flex items-start group p-6 rounded-2xl bg-white border border-stone-200 shadow-sm hover:shadow-lg hover:border-blue-200 transition-all duration-300">
+                <div className="flex items-start group p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg shadow-cyan-900/20 hover:shadow-cyan-900/40 transition-all duration-300">
                   <div className="flex-shrink-0">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-blue-900 to-blue-950 shadow-lg group-hover:shadow-blue-900/50 group-hover:scale-110 transition-all duration-300">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 shadow-lg group-hover:shadow-cyan-500/50 group-hover:scale-110 transition-all duration-300">
                       <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -132,32 +129,32 @@ export default function ContactForm() {
                     </div>
                   </div>
                   <div className="ml-5">
-                    <h3 className="text-xl font-semibold text-stone-900 mb-1">Location</h3>
-                    <p className="text-lg text-stone-600">Pakistan</p>
-                    <p className="text-sm text-stone-500 mt-1">Serving businesses nationwide</p>
+                    <h3 className="text-xl font-semibold text-white mb-1">Location</h3>
+                    <p className="text-lg text-stone-300/85">Pakistan</p>
+                    <p className="text-sm text-stone-400 mt-1">Serving businesses nationwide</p>
                   </div>
                 </div>
 
                 {/* Business Hours */}
-                <div className="flex items-start group p-6 rounded-2xl bg-white border border-stone-200 shadow-sm hover:shadow-lg hover:border-amber-200 transition-all duration-300">
+                <div className="flex items-start group p-6 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg shadow-emerald-900/20 hover:shadow-emerald-900/40 transition-all duration-300">
                   <div className="flex-shrink-0">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-amber-600 to-amber-700 shadow-lg group-hover:shadow-amber-600/50 group-hover:scale-110 transition-all duration-300">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg group-hover:shadow-emerald-600/50 group-hover:scale-110 transition-all duration-300">
                       <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                   </div>
                   <div className="ml-5">
-                    <h3 className="text-xl font-semibold text-stone-900 mb-1">Business Hours</h3>
-                    <p className="text-lg text-stone-600">Monday - Saturday: 9:00 AM - 6:00 PM</p>
-                    <p className="text-sm text-stone-500 mt-1">WhatsApp available 24/7</p>
+                    <h3 className="text-xl font-semibold text-white mb-1">Business Hours</h3>
+                    <p className="text-lg text-stone-300/85">Monday - Saturday: 9:00 AM - 6:00 PM</p>
+                    <p className="text-sm text-stone-400 mt-1">WhatsApp available 24/7</p>
                   </div>
                 </div>
               </div>
 
               {/* Quick Links */}
-              <div className="mt-12 p-8 bg-gradient-to-br from-emerald-50 to-blue-50 rounded-2xl border border-emerald-100/50 shadow-lg hover:shadow-xl transition-shadow duration-300 animate-fade-in-up animation-delay-400">
-                <h3 className="font-display text-2xl font-semibold text-stone-900 mb-6">Quick Actions</h3>
+              <div className="mt-12 p-8 bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 shadow-lg shadow-emerald-900/20 hover:shadow-emerald-900/40 transition-shadow duration-300 animate-fade-in-up animation-delay-400">
+                <h3 className="font-display text-2xl font-semibold text-white mb-6">Quick Actions</h3>
                 <div className="space-y-4">
                   <a
                     href="https://wa.me/923184489249?text=Hello, I'm interested in your services"
@@ -174,7 +171,7 @@ export default function ContactForm() {
                   </a>
                   <a
                     href="tel:+923184489249"
-                    className="group block w-full text-center bg-gradient-to-r from-blue-900 to-blue-950 text-white px-6 py-4 rounded-xl hover:from-blue-950 hover:to-blue-900 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-blue-900/50 transform hover:-translate-y-0.5"
+                    className="group block w-full text-center bg-gradient-to-r from-cyan-600 to-cyan-700 text-white px-6 py-4 rounded-xl hover:from-cyan-700 hover:to-cyan-800 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-cyan-600/50 transform hover:-translate-y-0.5"
                   >
                     <span className="flex items-center justify-center gap-3">
                       <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -188,8 +185,8 @@ export default function ContactForm() {
             </div>
 
             {/* Contact Form */}
-            <div className="bg-white rounded-2xl shadow-2xl p-10 border border-stone-200/50 hover:shadow-3xl transition-shadow duration-300 animate-fade-in-up animation-delay-500">
-              <h2 className="font-display text-3xl font-bold text-stone-900 mb-8">
+            <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl shadow-emerald-900/20 p-10 border border-white/10 hover:shadow-emerald-900/40 transition-shadow duration-300 animate-fade-in-up animation-delay-500">
+              <h2 className="font-display text-3xl font-bold text-white mb-8 drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">
                 Send us a Message
               </h2>
               
@@ -219,7 +216,7 @@ export default function ContactForm() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-semibold text-stone-900 mb-2">
+                  <label htmlFor="name" className="block text-sm font-semibold text-white mb-2">
                     Full Name *
                   </label>
                   <input
@@ -228,13 +225,13 @@ export default function ContactForm() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-all bg-stone-50 hover:bg-white"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-white/5 backdrop-blur-sm text-white placeholder-stone-400 hover:bg-white/10"
                     placeholder="John Doe"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-stone-900 mb-2">
+                  <label htmlFor="email" className="block text-sm font-semibold text-white mb-2">
                     Email Address *
                   </label>
                   <input
@@ -243,13 +240,13 @@ export default function ContactForm() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-all bg-stone-50 hover:bg-white"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-white/5 backdrop-blur-sm text-white placeholder-stone-400 hover:bg-white/10"
                     placeholder="john@example.com"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-semibold text-stone-900 mb-2">
+                  <label htmlFor="phone" className="block text-sm font-semibold text-white mb-2">
                     Phone Number
                   </label>
                   <input
@@ -257,13 +254,13 @@ export default function ContactForm() {
                     id="phone"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-all bg-stone-50 hover:bg-white"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-white/5 backdrop-blur-sm text-white placeholder-stone-400 hover:bg-white/10"
                     placeholder="+92 300 1234567"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-semibold text-stone-900 mb-2">
+                  <label htmlFor="subject" className="block text-sm font-semibold text-white mb-2">
                     Subject *
                   </label>
                   <select
@@ -271,7 +268,7 @@ export default function ContactForm() {
                     required
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-all bg-stone-50 hover:bg-white"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-white/5 backdrop-blur-sm text-white hover:bg-white/10"
                   >
                     <option value="">Select a subject</option>
                     <option value="Digital Invoice Services">Digital Invoice Services</option>
@@ -283,7 +280,7 @@ export default function ContactForm() {
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-semibold text-stone-900 mb-2">
+                  <label htmlFor="message" className="block text-sm font-semibold text-white mb-2">
                     Message *
                   </label>
                   <textarea
@@ -292,7 +289,7 @@ export default function ContactForm() {
                     rows={5}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-3 border border-stone-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:border-transparent transition-all resize-none bg-stone-50 hover:bg-white"
+                    className="w-full px-4 py-3 border border-white/20 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all resize-none bg-white/5 backdrop-blur-sm text-white placeholder-stone-400 hover:bg-white/10"
                     placeholder="Tell us more about your requirements..."
                   />
                 </div>
@@ -313,7 +310,7 @@ export default function ContactForm() {
                   ) : 'Send Message'}
                 </button>
 
-                <p className="text-sm text-stone-500 text-center">
+                <p className="text-sm text-stone-400 text-center">
                   Note: To use this form, you&apos;ll need to configure EmailJS with your credentials.
                 </p>
               </form>
@@ -323,11 +320,14 @@ export default function ContactForm() {
       </section>
 
       {/* Additional Info */}
-      <section className="py-20 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section className="py-20 bg-slate-900/50 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-3xl"></div>
+        </div>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
           <div className="mx-auto max-w-2xl text-center mb-16 animate-fade-in-up">
-            <h2 className="font-display text-4xl font-bold text-stone-900 mb-4">Why Contact Us?</h2>
-            <p className="text-xl text-stone-600">
+            <h2 className="font-display text-4xl font-bold text-white mb-4 drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">Why Contact Us?</h2>
+            <p className="text-xl text-stone-300/85">
               We&apos;re here to provide the best service and support
             </p>
           </div>
