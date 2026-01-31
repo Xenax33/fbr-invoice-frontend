@@ -135,15 +135,15 @@ export default function BuyersPage() {
         {/* Header */}
         <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Buyers Management</h2>
-            <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-600 flex items-center">
-              <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-blue-600" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-[0_0_30px_rgba(16,185,129,0.3)]">Buyers Management</h2>
+            <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-stone-300/85 flex items-center">
+              <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-emerald-400" />
               Manage your buyer information
             </p>
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 group"
+            className="inline-flex items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:shadow-emerald-900/50 hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 group"
           >
             <UserPlus className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
             Add Buyer
@@ -151,13 +151,13 @@ export default function BuyersPage() {
         </div>
 
         {/* Filters */}
-        <div className="rounded-xl sm:rounded-2xl bg-white p-4 sm:p-6 shadow-lg border border-slate-200">
+        <div className="rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-4 sm:p-6 shadow-lg shadow-emerald-900/20">
           <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {/* Search */}
             <div className="lg:col-span-2">
-              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Search</label>
+              <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">Search</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-emerald-400" />
                 <input
                   type="text"
                   placeholder="Search by NTN/CNIC, business name..."
@@ -166,21 +166,21 @@ export default function BuyersPage() {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                  className="w-full rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 text-sm text-white placeholder-stone-400 focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                 />
               </div>
             </div>
 
             {/* Registration Type Filter */}
             <div>
-              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Registration Type</label>
+              <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">Registration Type</label>
               <select
                 value={registrationFilter}
                 onChange={(e) => {
                   setRegistrationFilter(e.target.value as 'ALL' | 'Registered' | 'Unregistered');
                   setCurrentPage(1);
                 }}
-                className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                className="w-full rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm text-white focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
               >
                 <option value="ALL">All Types</option>
                 <option value="Registered">Registered</option>
@@ -190,57 +190,57 @@ export default function BuyersPage() {
           </div>
 
           {/* Stats */}
-          <div className="mt-4 sm:mt-5 flex items-center justify-between border-t-2 border-slate-200 pt-4 sm:pt-5">
-            <p className="text-xs sm:text-sm text-slate-600 flex items-center">
-              <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-blue-600" />
-              Showing <span className="font-bold text-slate-900 mx-1">{buyers.length}</span> of{' '}
-              <span className="font-bold text-slate-900 ml-1">{totalBuyers}</span> buyers
+          <div className="mt-4 sm:mt-5 flex items-center justify-between border-t-2 border-white/10 pt-4 sm:pt-5">
+            <p className="text-xs sm:text-sm text-stone-300/85 flex items-center">
+              <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-emerald-400" />
+              Showing <span className="font-bold text-white mx-1">{buyers.length}</span> of{' '}
+              <span className="font-bold text-white ml-1">{totalBuyers}</span> buyers
             </p>
           </div>
         </div>
 
         {/* Buyers Table */}
-        <div className="rounded-xl sm:rounded-2xl bg-white shadow-lg border border-slate-200 overflow-hidden">
+        <div className="rounded-xl sm:rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg shadow-emerald-900/20 overflow-hidden">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 sm:py-16">
-              <div className="h-10 w-10 sm:h-12 sm:w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent shadow-lg"></div>
-              <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-slate-600 font-medium">Loading buyers...</p>
+              <div className="h-10 w-10 sm:h-12 sm:w-12 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent shadow-lg"></div>
+              <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-stone-300/85 font-medium">Loading buyers...</p>
             </div>
           ) : buyers.length === 0 ? (
             <div className="py-12 sm:py-16 text-center">
-              <Users className="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-slate-300 mb-3 sm:mb-4" />
-              <p className="text-slate-600 font-medium text-sm sm:text-base">No buyers found</p>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">Create your first buyer to get started</p>
+              <Users className="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-stone-400 mb-3 sm:mb-4" />
+              <p className="text-white font-medium text-sm sm:text-base">No buyers found</p>
+              <p className="text-xs sm:text-sm text-stone-400 mt-1">Create your first buyer to get started</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[640px]">
-                <thead className="bg-gradient-to-r from-slate-50 to-blue-50 border-b-2 border-slate-200">
+                <thead className="bg-white/5 backdrop-blur-sm border-b-2 border-white/10">
                   <tr>
-                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-stone-200 uppercase tracking-wider">
                       Buyer
                     </th>
-                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider hidden md:table-cell">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-stone-200 uppercase tracking-wider hidden md:table-cell">
                       Location
                     </th>
-                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-stone-200 uppercase tracking-wider">
                       Type
                     </th>
-                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs font-bold text-stone-200 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-white/10">
                   {buyers.map((buyer) => (
-                    <tr key={buyer.id} className="hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50 transition-all duration-200 group">
+                    <tr key={buyer.id} className="hover:bg-white/5 transition-all duration-200 group">
                       <td className="px-4 sm:px-6 py-3 sm:py-4">
                         <div>
-                          <p className="font-semibold text-slate-900 text-sm sm:text-base flex items-center">
-                            <Building2 className="h-4 w-4 mr-1.5 text-blue-600 flex-shrink-0" />
+                          <p className="font-semibold text-white text-sm sm:text-base flex items-center">
+                            <Building2 className="h-4 w-4 mr-1.5 text-emerald-400 flex-shrink-0" />
                             <span className="truncate">{buyer.businessName}</span>
                           </p>
-                          <p className="text-xs sm:text-sm text-slate-600 flex items-center mt-0.5">
+                          <p className="text-xs sm:text-sm text-stone-300/85 flex items-center mt-0.5">
                             <CreditCard className="h-3 w-3 mr-1 flex-shrink-0" />
                             {buyer.ntncnic}
                           </p>
@@ -248,11 +248,11 @@ export default function BuyersPage() {
                       </td>
                       <td className="px-4 sm:px-6 py-3 sm:py-4 hidden md:table-cell">
                         <div>
-                          <p className="font-medium text-slate-900 flex items-center text-sm sm:text-base">
-                            <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-slate-400 flex-shrink-0" />
+                          <p className="font-medium text-white flex items-center text-sm sm:text-base">
+                            <MapPin className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-emerald-400 flex-shrink-0" />
                             <span className="truncate">{buyer.province}</span>
                           </p>
-                          <p className="text-xs sm:text-sm text-slate-600 mt-0.5 truncate">{buyer.address}</p>
+                          <p className="text-xs sm:text-sm text-stone-300/85 mt-0.5 truncate">{buyer.address}</p>
                         </div>
                       </td>
                       <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
@@ -300,22 +300,22 @@ export default function BuyersPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t-2 border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50 px-4 sm:px-6 py-3 sm:py-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t-2 border-white/10 bg-white/5 backdrop-blur-sm px-4 sm:px-6 py-3 sm:py-4">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-slate-300 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md group"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-white/20 bg-white/5 backdrop-blur-sm px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-white/10 hover:border-emerald-400/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:border-white/20 transition-all duration-200 shadow-sm hover:shadow-md group"
               >
                 <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 group-hover:-translate-x-1 transition-transform duration-200" />
                 Previous
               </button>
-              <span className="text-xs sm:text-sm font-semibold text-slate-700 bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border-2 border-slate-200 shadow-sm">
+              <span className="text-xs sm:text-sm font-semibold text-white bg-white/10 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border-2 border-white/20 shadow-sm">
                 Page {currentPage} of {totalPages}
               </span>
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-slate-300 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md group"
+                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-white/20 bg-white/5 backdrop-blur-sm px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-white/10 hover:border-emerald-400/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:border-white/20 transition-all duration-200 shadow-sm hover:shadow-md group"
               >
                 Next
                 <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
@@ -328,10 +328,10 @@ export default function BuyersPage() {
       {/* Create Buyer Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4">
-          <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-xl sm:rounded-2xl bg-white shadow-2xl border-2 border-slate-200">
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 rounded-t-xl sm:rounded-t-2xl border-b-2 border-blue-700">
+          <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-xl sm:rounded-2xl bg-slate-900/95 backdrop-blur-xl border-2 border-white/10 shadow-2xl">
+            <div className="sticky top-0 bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 rounded-t-xl sm:rounded-t-2xl border-b-2 border-emerald-800">
               <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-white/20 flex items-center justify-center">
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
                   <UserPlus className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
                 <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Add New Buyer</h3>
@@ -339,9 +339,9 @@ export default function BuyersPage() {
             </div>
             <form onSubmit={handleCreateBuyer} className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-5">
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
-                  <CreditCard className="inline h-4 w-4 mr-1.5 text-blue-600" />
-                  NTN/CNIC <span className="text-red-500">*</span>
+                <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">
+                  <CreditCard className="inline h-4 w-4 mr-1.5 text-emerald-400" />
+                  NTN/CNIC <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
@@ -349,36 +349,36 @@ export default function BuyersPage() {
                   maxLength={13}
                   value={formData.ntncnic}
                   onChange={(e) => setFormData({ ...formData, ntncnic: e.target.value })}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm text-white placeholder-stone-400 focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                   placeholder="Enter 13-digit NTN/CNIC"
                 />
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
-                  <Building2 className="inline h-4 w-4 mr-1.5 text-blue-600" />
-                  Business Name <span className="text-red-500">*</span>
+                <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">
+                  <Building2 className="inline h-4 w-4 mr-1.5 text-emerald-400" />
+                  Business Name <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.businessName}
                   onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm text-white placeholder-stone-400 focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                   placeholder="Enter business name"
                 />
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
-                  <MapPin className="inline h-4 w-4 mr-1.5 text-blue-600" />
-                  Province <span className="text-red-500">*</span>
+                <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">
+                  <MapPin className="inline h-4 w-4 mr-1.5 text-emerald-400" />
+                  Province <span className="text-red-400">*</span>
                 </label>
                 <select
                   required
                   value={formData.province}
                   onChange={(e) => setFormData({ ...formData, province: e.target.value })}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm text-white focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 >
                   <option value="">Select Province</option>
                   {PROVINCES.map((province) => (
@@ -388,35 +388,36 @@ export default function BuyersPage() {
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
-                  Address <span className="text-red-500">*</span>
+                <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">
+                  Address <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   required
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm text-white placeholder-stone-400 focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                   placeholder="Enter complete address"
                   rows={3}
                 />
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
-                  Registration Type <span className="text-red-500">*</span>
+                <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">
+                  <ShieldCheck className="inline h-4 w-4 mr-1.5 text-emerald-400" />
+                  Registration Type <span className="text-red-400">*</span>
                 </label>
                 <select
                   required
                   value={formData.registrationType}
                   onChange={(e) => setFormData({ ...formData, registrationType: e.target.value as 'Registered' | 'Unregistered' })}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm text-white focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                 >
                   <option value="Registered">Registered</option>
                   <option value="Unregistered">Unregistered</option>
                 </select>
               </div>
 
-              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-4 border-t-2 border-slate-200">
+              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-4 border-t-2 border-white/10">
                 <button
                   type="button"
                   onClick={() => {
@@ -424,14 +425,14 @@ export default function BuyersPage() {
                     resetForm();
                   }}
                   disabled={createBuyer.isPending}
-                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl border-2 border-slate-300 px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl border-2 border-white/20 bg-white/5 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-white hover:bg-white/10 hover:border-white/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createBuyer.isPending}
-                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-white hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 shadow-lg shadow-emerald-900/40 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {createBuyer.isPending ? 'Creating...' : 'Create Buyer'}
                 </button>
@@ -444,10 +445,10 @@ export default function BuyersPage() {
       {/* Edit Buyer Modal */}
       {showEditModal && selectedBuyer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4">
-          <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-xl sm:rounded-2xl bg-white shadow-2xl border-2 border-slate-200">
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 rounded-t-xl sm:rounded-t-2xl border-b-2 border-blue-700">
+          <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-xl sm:rounded-2xl bg-slate-900/95 backdrop-blur-xl border-2 border-white/10 shadow-2xl">
+            <div className="sticky top-0 bg-gradient-to-r from-cyan-600 to-cyan-700 px-4 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 rounded-t-xl sm:rounded-t-2xl border-b-2 border-cyan-800">
               <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-white/20 flex items-center justify-center">
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
                   <Edit className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
                 <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white">Edit Buyer</h3>
@@ -455,43 +456,43 @@ export default function BuyersPage() {
             </div>
             <form onSubmit={handleUpdateBuyer} className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-5">
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
-                  <CreditCard className="inline h-4 w-4 mr-1.5 text-blue-600" />
+                <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">
+                  <CreditCard className="inline h-4 w-4 mr-1.5 text-cyan-400" />
                   NTN/CNIC
                 </label>
                 <input
                   type="text"
                   disabled
                   value={formData.ntncnic}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm bg-slate-50 text-slate-500"
+                  className="w-full rounded-lg sm:rounded-xl border-2 border-white/10 px-3 sm:px-4 py-2 sm:py-2.5 text-sm bg-white/5 backdrop-blur-sm text-stone-400"
                 />
-                <p className="mt-1 text-xs text-slate-500">NTN/CNIC cannot be changed</p>
+                <p className="mt-1 text-xs text-stone-400">NTN/CNIC cannot be changed</p>
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
-                  <Building2 className="inline h-4 w-4 mr-1.5 text-blue-600" />
-                  Business Name <span className="text-red-500">*</span>
+                <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">
+                  <Building2 className="inline h-4 w-4 mr-1.5 text-cyan-400" />
+                  Business Name <span className="text-red-400">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={formData.businessName}
                   onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm text-white placeholder-stone-400 focus:border-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200"
                 />
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
-                  <MapPin className="inline h-4 w-4 mr-1.5 text-blue-600" />
-                  Province <span className="text-red-500">*</span>
+                <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">
+                  <MapPin className="inline h-4 w-4 mr-1.5 text-cyan-400" />
+                  Province <span className="text-red-400">*</span>
                 </label>
                 <select
                   required
                   value={formData.province}
                   onChange={(e) => setFormData({ ...formData, province: e.target.value })}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm text-white focus:border-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200"
                 >
                   <option value="">Select Province</option>
                   {PROVINCES.map((province) => (
@@ -501,47 +502,48 @@ export default function BuyersPage() {
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
-                  Address <span className="text-red-500">*</span>
+                <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">
+                  Address <span className="text-red-400">*</span>
                 </label>
                 <textarea
                   required
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm text-white placeholder-stone-400 focus:border-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200"
                   rows={3}
                 />
               </div>
 
               <div>
-                <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
-                  Registration Type <span className="text-red-500">*</span>
+                <label className="block text-xs sm:text-sm font-semibold text-stone-200 mb-2">
+                  <ShieldCheck className="inline h-4 w-4 mr-1.5 text-cyan-400" />
+                  Registration Type <span className="text-red-400">*</span>
                 </label>
                 <select
                   required
                   value={formData.registrationType}
                   onChange={(e) => setFormData({ ...formData, registrationType: e.target.value as 'Registered' | 'Unregistered' })}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="w-full rounded-lg sm:rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-3 sm:px-4 py-2 sm:py-2.5 text-sm text-white focus:border-cyan-400/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 transition-all duration-200"
                 >
                   <option value="Registered">Registered</option>
                   <option value="Unregistered">Unregistered</option>
                 </select>
               </div>
 
-              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-4 border-t-2 border-slate-200">
+              <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-4 border-t-2 border-white/10">
                 <button
                   type="button"
                   onClick={() => {
                     setShowEditModal(false);
                     resetForm();
                   }}
-                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl border-2 border-slate-300 px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all duration-200"
+                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl border-2 border-white/20 bg-white/5 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-white hover:bg-white/10 hover:border-white/30 transition-all duration-200 shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-white hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg"
+                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-600 px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-white hover:from-cyan-600 hover:to-cyan-700 transition-all duration-200 shadow-lg shadow-cyan-900/40"
                 >
                   Update Buyer
                 </button>
@@ -554,20 +556,20 @@ export default function BuyersPage() {
       {/* Delete Confirmation Modal */}
       {showDeleteModal && selectedBuyer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4">
-          <div className="w-full max-w-md rounded-xl sm:rounded-2xl bg-white shadow-2xl border-2 border-slate-200">
+          <div className="w-full max-w-md rounded-xl sm:rounded-2xl bg-slate-900/95 backdrop-blur-xl shadow-2xl border-2 border-white/10">
             <div className="bg-gradient-to-r from-red-600 to-red-700 px-4 sm:px-6 py-4 sm:py-5 rounded-t-xl sm:rounded-t-2xl border-b-2 border-red-800">
               <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-white/20 flex items-center justify-center">
+                <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
                   <Trash2 className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-white">Delete Buyer</h3>
               </div>
             </div>
             <div className="p-4 sm:p-6">
-              <p className="text-sm sm:text-base text-slate-700 mb-4">
-                Are you sure you want to delete <span className="font-bold text-slate-900">{selectedBuyer.businessName}</span>?
+              <p className="text-sm sm:text-base text-stone-200/85 mb-4">
+                Are you sure you want to delete <span className="font-bold text-white">{selectedBuyer.businessName}</span>?
               </p>
-              <p className="text-xs sm:text-sm text-red-600 mb-4">
+              <p className="text-xs sm:text-sm text-red-400 mb-4">
                 This action cannot be undone. The buyer will be permanently removed.
               </p>
               <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3">
@@ -576,13 +578,13 @@ export default function BuyersPage() {
                     setShowDeleteModal(false);
                     setSelectedBuyer(null);
                   }}
-                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl border-2 border-slate-300 px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all duration-200"
+                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl border-2 border-white/20 bg-white/5 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-white hover:bg-white/10 hover:border-white/30 transition-all duration-200 shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteBuyer}
-                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl bg-gradient-to-r from-red-600 to-red-700 px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-white hover:from-red-700 hover:to-red-800 transition-all duration-200 shadow-lg"
+                  className="w-full sm:flex-1 rounded-lg sm:rounded-xl bg-gradient-to-r from-red-600 to-red-700 px-4 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-white hover:from-red-700 hover:to-red-800 transition-all duration-200 shadow-lg shadow-red-900/40"
                 >
                   Delete
                 </button>

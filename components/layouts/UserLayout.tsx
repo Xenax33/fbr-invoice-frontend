@@ -67,24 +67,24 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-50">
+    <div className="min-h-screen bg-slate-950">
       {/* Mobile Menu Button */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="fixed top-4 left-4 z-50 lg:hidden rounded-lg bg-white p-2 shadow-lg border-2 border-slate-200 hover:bg-slate-50 transition-all duration-200"
+        className="fixed top-4 left-4 z-50 lg:hidden rounded-lg bg-white/10 backdrop-blur-md p-2 shadow-lg shadow-emerald-900/20 border border-white/10 hover:bg-white/20 transition-all duration-200"
         aria-label="Toggle menu"
       >
         {mobileMenuOpen ? (
-          <X className="h-6 w-6 text-slate-700" />
+          <X className="h-6 w-6 text-white" />
         ) : (
-          <Menu className="h-6 w-6 text-slate-700" />
+          <Menu className="h-6 w-6 text-white" />
         )}
       </button>
 
       {/* Mobile Overlay */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-md lg:hidden"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
@@ -95,16 +95,16 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
           mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex h-full flex-col bg-white shadow-2xl border-r-2 border-slate-200">
+        <div className="flex h-full flex-col bg-slate-900/95 backdrop-blur-xl shadow-2xl border-r border-white/10">
           {/* Logo/Brand */}
-          <div className="flex h-20 items-center justify-center border-b-2 border-slate-200 bg-gradient-to-r from-blue-600 to-indigo-600 px-6">
+          <div className="flex h-20 items-center justify-center border-b border-white/10 bg-gradient-to-r from-emerald-600 to-emerald-700 px-6">
             <div className="flex items-center space-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm shadow-lg">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm shadow-lg shadow-emerald-900/30">
                 <ShieldCheck className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">FBR Invoice</h1>
-                <p className="text-xs text-blue-100">User Portal</p>
+                <h1 className="text-xl font-bold text-white drop-shadow-lg">FBR Invoice</h1>
+                <p className="text-xs text-emerald-100">User Portal</p>
               </div>
             </div>
           </div>
@@ -121,11 +121,11 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
                   href={item.href}
                   className={`flex items-center space-x-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-200 group ${
                     isActive
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30'
-                      : 'text-slate-700 hover:bg-gradient-to-r hover:from-slate-100 hover:to-blue-50 hover:text-blue-700'
+                      ? 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-900/40'
+                      : 'text-stone-300 hover:bg-white/10 hover:text-emerald-300 backdrop-blur-sm'
                   }`}
                 >
-                  <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-slate-500 group-hover:text-blue-600'}`} />
+                  <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-stone-400 group-hover:text-emerald-400'}`} />
                   <span>{item.name}</span>
                 </Link>
               );
@@ -133,24 +133,24 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
           </nav>
 
           {/* User Info */}
-          <div className="border-t-2 border-slate-200 p-4 space-y-3">
-            <div className="rounded-xl bg-gradient-to-br from-slate-50 to-blue-50 p-4 border-2 border-slate-200">
+          <div className="border-t border-white/10 p-4 space-y-3">
+            <div className="rounded-xl bg-white/5 backdrop-blur-xl p-4 border border-white/10 shadow-lg shadow-emerald-900/20">
               <div className="flex items-center space-x-3 mb-3">
-                <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                <div className="flex-shrink-0 h-10 w-10 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-900/30">
                   <UserIcon className="h-5 w-5 text-white" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-bold text-slate-900 truncate">{user.name}</p>
-                  <p className="text-xs text-blue-600 font-medium">User</p>
+                  <p className="text-sm font-bold text-white truncate">{user.name}</p>
+                  <p className="text-xs text-emerald-300 font-medium">User</p>
                 </div>
               </div>
               <div className="space-y-1.5 text-xs">
-                <div className="flex items-center text-slate-600 truncate">
-                  <Mail className="h-3 w-3 mr-1.5 flex-shrink-0" />
+                <div className="flex items-center text-stone-300/85 truncate">
+                  <Mail className="h-3 w-3 mr-1.5 flex-shrink-0 text-emerald-400" />
                   <span className="truncate">{user.email}</span>
                 </div>
-                <div className="flex items-center text-slate-600 truncate">
-                  <Building2 className="h-3 w-3 mr-1.5 flex-shrink-0" />
+                <div className="flex items-center text-stone-300/85 truncate">
+                  <Building2 className="h-3 w-3 mr-1.5 flex-shrink-0 text-emerald-400" />
                   <span className="truncate">{user.businessName}</span>
                 </div>
               </div>
@@ -170,18 +170,18 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
       {/* Main Content */}
       <div className="lg:pl-72">
         {/* Header */}
-        <header className="sticky top-0 z-30 flex h-16 lg:h-20 items-center justify-between border-b border-slate-200/60 bg-white/80 backdrop-blur-md px-4 sm:px-6 lg:px-8 shadow-sm">
+        <header className="sticky top-0 z-30 flex h-16 lg:h-20 items-center justify-between border-b border-white/10 bg-slate-900/80 backdrop-blur-xl px-4 sm:px-6 lg:px-8 shadow-lg shadow-emerald-900/10">
           {/* Mobile: Add padding for menu button */}
           <div className="lg:hidden w-12"></div>
           
           <div className="flex-1 lg:flex-none">
-            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-white drop-shadow-[0_0_20px_rgba(16,185,129,0.3)]">
               {pathname === '/dashboard' ? 'Dashboard' : 
                pathname === '/dashboard/buyers' ? 'Buyers Management' :
                pathname === '/dashboard/hs-codes' ? 'HS Codes Management' :
                pathname === '/dashboard/invoices' ? 'Invoices Management' : 'User Dashboard'}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-0.5 hidden sm:block">
+            <p className="text-xs sm:text-sm text-stone-400 mt-0.5 hidden sm:block">
               {pathname === '/dashboard' ? 'Welcome back! Here\'s your overview' :
                pathname === '/dashboard/buyers' ? 'Manage your buyer information' :
                pathname === '/dashboard/hs-codes' ? 'Manage your HS codes' :
@@ -189,9 +189,9 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
             </p>
           </div>
           <div className="hidden sm:flex items-center space-x-4">
-            <div className="text-right px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg bg-gradient-to-br from-slate-50 to-blue-50 border border-slate-200">
-              <p className="text-xs lg:text-sm font-semibold text-slate-900 truncate max-w-[120px] lg:max-w-none">{user.name}</p>
-              <p className="text-xs text-blue-600 font-medium">User</p>
+            <div className="text-right px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/10 shadow-lg shadow-emerald-900/20">
+              <p className="text-xs lg:text-sm font-semibold text-white truncate max-w-[120px] lg:max-w-none">{user.name}</p>
+              <p className="text-xs text-emerald-300 font-medium">User</p>
             </div>
           </div>
         </header>

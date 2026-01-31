@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import AdminLayout from '@/components/layouts/AdminLayout';
+import { useTheme } from '@/contexts/ThemeContext';
 import { CreateUserRequest, UpdateUserRequest } from '@/services/user.service';
 import type { User } from '@/types/api';
 import { useUsers, useCreateUser, useUpdateUser, useDeleteUser, useToggleUserStatus, useUpdateUserPassword } from '@/hooks/useUsers';
@@ -38,6 +39,7 @@ const PROVINCES = [
 ];
 
 export default function UsersPage() {
+  const { theme } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<'ALL' | 'ADMIN' | 'USER'>('ALL');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'ACTIVE' | 'INACTIVE'>('ALL');
@@ -206,15 +208,19 @@ export default function UsersPage() {
         {/* Header */}
         <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">User Management</h2>
-            <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-600 flex items-center">
-              <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-blue-600" />
+            <h2 className={`text-2xl sm:text-3xl font-bold transition-colors duration-300 ${
+              theme === 'dark' ? 'text-white' : 'text-stone-900'
+            }`}>User Management</h2>
+            <p className={`mt-1.5 sm:mt-2 text-xs sm:text-sm flex items-center transition-colors duration-300 ${
+              theme === 'dark' ? 'text-stone-200/85' : 'text-stone-700'
+            }`}>
+              <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-emerald-400" />
               Manage all platform users and permissions
             </p>
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 group"
+            className="inline-flex items-center justify-center rounded-lg sm:rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 sm:px-6 py-2.5 sm:py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/30 hover:shadow-emerald-900/50 hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 group"
           >
             <UserPlus className="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:scale-110 transition-transform duration-200" />
             Create User
@@ -222,13 +228,21 @@ export default function UsersPage() {
         </div>
 
         {/* Filters */}
-        <div className="rounded-xl sm:rounded-2xl bg-white p-4 sm:p-6 shadow-lg border border-slate-200">
+        <div className={`rounded-xl sm:rounded-2xl backdrop-blur-xl border p-4 sm:p-6 shadow-lg transition-colors duration-300 ${
+          theme === 'dark' 
+            ? 'bg-white/5 border-white/10 shadow-emerald-900/20' 
+            : 'bg-white border-stone-200 shadow-stone-900/5'
+        }`}>
           <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {/* Search */}
             <div className="lg:col-span-2">
-              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Search</label>
+              <label className={`block text-xs sm:text-sm font-semibold mb-2 transition-colors duration-300 ${
+                theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+              }`}>Search</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-slate-400" />
+                <Search className={`absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-stone-400' : 'text-stone-600'
+                }`} />
                 <input
                   type="text"
                   placeholder="Search by name, email, or business..."
@@ -237,21 +251,31 @@ export default function UsersPage() {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                  className={`w-full rounded-lg sm:rounded-xl backdrop-blur-sm border-2 pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 text-sm focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-300 ${
+                    theme === 'dark' 
+                      ? 'bg-white/5 border-white/20 text-white placeholder-stone-400' 
+                      : 'bg-white border-stone-300 text-stone-900 placeholder-stone-500'
+                  }`}
                 />
               </div>
             </div>
 
             {/* Role Filter */}
             <div>
-              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Role</label>
+              <label className={`block text-xs sm:text-sm font-semibold mb-2 transition-colors duration-300 ${
+                theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+              }`}>Role</label>
               <select
                 value={roleFilter}
                 onChange={(e) => {
                   setRoleFilter(e.target.value as 'ALL' | 'ADMIN' | 'USER');
                   setCurrentPage(1);
                 }}
-                className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                className={`w-full rounded-lg sm:rounded-xl backdrop-blur-sm border-2 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-300 ${
+                  theme === 'dark' 
+                    ? 'bg-white/5 border-white/20 text-white' 
+                    : 'bg-white border-stone-300 text-stone-900'
+                }`}
               >
                 <option value="ALL">All Roles</option>
                 <option value="ADMIN">Admin</option>
@@ -261,14 +285,20 @@ export default function UsersPage() {
 
             {/* Status Filter */}
             <div>
-              <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Status</label>
+              <label className={`block text-xs sm:text-sm font-semibold mb-2 transition-colors duration-300 ${
+                theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+              }`}>Status</label>
               <select
                 value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value as 'ALL' | 'ACTIVE' | 'INACTIVE');
                   setCurrentPage(1);
                 }}
-                className="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                className={`w-full rounded-lg sm:rounded-xl backdrop-blur-sm border-2 px-3 sm:px-4 py-2 sm:py-2.5 text-sm focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-300 ${
+                  theme === 'dark' 
+                    ? 'bg-white/5 border-white/20 text-white' 
+                    : 'bg-white border-stone-300 text-stone-900'
+                }`}
               >
                 <option value="ALL">All Status</option>
                 <option value="ACTIVE">Active</option>
@@ -278,61 +308,103 @@ export default function UsersPage() {
           </div>
 
           {/* Stats */}
-          <div className="mt-4 sm:mt-5 flex items-center justify-between border-t-2 border-slate-200 pt-4 sm:pt-5">
-            <p className="text-xs sm:text-sm text-slate-600 flex items-center">
-              <UserIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-blue-600" />
-              Showing <span className="font-bold text-slate-900 mx-1">{users.length}</span> of{' '}
-              <span className="font-bold text-slate-900 ml-1">{totalUsers}</span> users
+          <div className={`mt-4 sm:mt-5 flex items-center justify-between border-t pt-4 sm:pt-5 transition-colors duration-300 ${
+            theme === 'dark' ? 'border-white/10' : 'border-stone-200'
+          }`}>
+            <p className={`text-xs sm:text-sm flex items-center transition-colors duration-300 ${
+              theme === 'dark' ? 'text-stone-200/85' : 'text-stone-700'
+            }`}>
+              <UserIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-emerald-400" />
+              Showing <span className={`font-bold mx-1 transition-colors duration-300 ${
+                theme === 'dark' ? 'text-white' : 'text-stone-900'
+              }`}>{users.length}</span> of{' '}
+              <span className={`font-bold ml-1 transition-colors duration-300 ${
+                theme === 'dark' ? 'text-white' : 'text-stone-900'
+              }`}>{totalUsers}</span> users
             </p>
           </div>
         </div>
 
         {/* Users Table */}
-        <div className="rounded-xl sm:rounded-2xl bg-white shadow-lg border border-slate-200 overflow-hidden">
+        <div className={`rounded-xl sm:rounded-2xl backdrop-blur-xl border shadow-lg overflow-hidden transition-colors duration-300 ${
+          theme === 'dark' 
+            ? 'bg-white/5 border-white/10 shadow-emerald-900/20' 
+            : 'bg-white border-stone-200 shadow-stone-900/5'
+        }`}>
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 sm:py-16">
-              <div className="h-10 w-10 sm:h-12 sm:w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent shadow-lg"></div>
-              <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-slate-600 font-medium">Loading users...</p>
+              <div className="h-10 w-10 sm:h-12 sm:w-12 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent shadow-lg"></div>
+              <p className={`mt-3 sm:mt-4 text-xs sm:text-sm font-medium transition-colors duration-300 ${
+                theme === 'dark' ? 'text-stone-200' : 'text-stone-700'
+              }`}>Loading users...</p>
             </div>
           ) : users.length === 0 ? (
             <div className="py-12 sm:py-16 text-center">
-              <UserIcon className="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-slate-300 mb-3 sm:mb-4" />
-              <p className="text-slate-600 font-medium text-sm sm:text-base">No users found</p>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">Try adjusting your filters</p>
+              <UserIcon className={`h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 transition-colors duration-300 ${
+                theme === 'dark' ? 'text-stone-400' : 'text-stone-500'
+              }`} />
+              <p className={`font-medium text-sm sm:text-base transition-colors duration-300 ${
+                theme === 'dark' ? 'text-stone-200' : 'text-stone-700'
+              }`}>No users found</p>
+              <p className={`text-xs sm:text-sm mt-1 transition-colors duration-300 ${
+                theme === 'dark' ? 'text-stone-400' : 'text-stone-600'
+              }`}>Try adjusting your filters</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[640px]">
-                <thead className="bg-gradient-to-r from-slate-50 to-blue-50 border-b-2 border-slate-200">
+                <thead className={`backdrop-blur-sm border-b-2 transition-colors duration-300 ${
+                  theme === 'dark' 
+                    ? 'bg-white/5 border-white/10' 
+                    : 'bg-stone-50 border-stone-200'
+                }`}>
                   <tr>
-                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className={`px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold uppercase tracking-wider transition-colors duration-300 ${
+                      theme === 'dark' ? 'text-stone-200' : 'text-stone-700'
+                    }`}>
                       User
                     </th>
-                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider hidden md:table-cell">
+                    <th className={`px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold uppercase tracking-wider hidden md:table-cell transition-colors duration-300 ${
+                      theme === 'dark' ? 'text-stone-200' : 'text-stone-700'
+                    }`}>
                       Business
                     </th>
-                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className={`px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold uppercase tracking-wider transition-colors duration-300 ${
+                      theme === 'dark' ? 'text-stone-200' : 'text-stone-700'
+                    }`}>
                       Role
                     </th>
-                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-slate-700 uppercase tracking-wider hidden sm:table-cell">
+                    <th className={`px-4 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold uppercase tracking-wider hidden sm:table-cell transition-colors duration-300 ${
+                      theme === 'dark' ? 'text-stone-200' : 'text-stone-700'
+                    }`}>
                       Status
                     </th>
-                    <th className="px-4 sm:px-6 py-3 sm:py-4 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    <th className={`px-4 sm:px-6 py-3 sm:py-4 text-right text-xs font-bold uppercase tracking-wider transition-colors duration-300 ${
+                      theme === 'dark' ? 'text-stone-200' : 'text-stone-700'
+                    }`}>
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className={`divide-y transition-colors duration-300 ${
+                  theme === 'dark' ? 'divide-white/10' : 'divide-stone-200'
+                }`}>
                   {users.map((user) => (
-                    <tr key={user.id} className="hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50 transition-all duration-200 group">
+                    <tr key={user.id} className={`hover:bg-white/5 transition-all duration-200 group ${
+                      theme === 'dark' ? '' : 'hover:bg-stone-50'
+                    }`}>
                       <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                         <div className="flex items-center space-x-2 sm:space-x-3">
-                          <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md">
+                          <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-900/30">
                             <UserIcon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                           </div>
                           <div className="min-w-0">
-                            <p className="font-semibold text-slate-900 text-sm sm:text-base truncate">{user.name}</p>
-                            <p className="text-xs sm:text-sm text-slate-600 flex items-center truncate">
+                            <p className={`font-semibold text-sm sm:text-base truncate transition-colors duration-300 ${
+                              theme === 'dark' ? 'text-white' : 'text-stone-900'
+                            }`}>{user.name}</p>
+                            <p className={`text-xs sm:text-sm flex items-center truncate transition-colors duration-300 ${
+                              theme === 'dark' ? 'text-stone-300/85' : 'text-stone-600'
+                            }`}>
                               <Mail className="h-3 w-3 mr-1 flex-shrink-0" />
                               <span className="truncate">{user.email}</span>
                             </p>
@@ -341,11 +413,17 @@ export default function UsersPage() {
                       </td>
                       <td className="px-4 sm:px-6 py-3 sm:py-4 hidden md:table-cell">
                         <div>
-                          <p className="font-medium text-slate-900 flex items-center text-sm sm:text-base">
-                            <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-slate-400 flex-shrink-0" />
+                          <p className={`font-medium flex items-center text-sm sm:text-base transition-colors duration-300 ${
+                            theme === 'dark' ? 'text-white' : 'text-stone-900'
+                          }`}>
+                            <Building2 className={`h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 flex-shrink-0 transition-colors duration-300 ${
+                              theme === 'dark' ? 'text-stone-400' : 'text-stone-500'
+                            }`} />
                             <span className="truncate">{user.businessName || 'N/A'}</span>
                           </p>
-                          <p className="text-xs sm:text-sm text-slate-600 flex items-center mt-1">
+                          <p className={`text-xs sm:text-sm flex items-center mt-1 transition-colors duration-300 ${
+                            theme === 'dark' ? 'text-stone-300/85' : 'text-stone-600'
+                          }`}>
                             <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
                             <span className="truncate">{user.province || 'N/A'}</span>
                           </p>
@@ -389,7 +467,7 @@ export default function UsersPage() {
                         <div className="flex items-center justify-end gap-1 sm:gap-2">
                           <button
                             onClick={() => openEditModal(user)}
-                            className="rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center group/btn"
+                            className="rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold text-white hover:from-cyan-600 hover:to-cyan-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center group/btn"
                             title="Edit user"
                           >
                             <Edit className="h-3.5 w-3.5 sm:mr-1 group-hover/btn:rotate-12 transition-transform duration-200" />
@@ -397,7 +475,7 @@ export default function UsersPage() {
                           </button>
                           <button
                             onClick={() => openPasswordModal(user)}
-                            className="rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold text-white hover:from-amber-600 hover:to-amber-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center group/btn"
+                            className="rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 px-2 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold text-white hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center group/btn"
                             title="Change password"
                           >
                             <Key className="h-3.5 w-3.5 sm:mr-1 group-hover/btn:rotate-12 transition-transform duration-200" />
@@ -424,22 +502,38 @@ export default function UsersPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t-2 border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50 px-4 sm:px-6 py-3 sm:py-4">
+            <div className={`flex flex-col sm:flex-row items-center justify-between gap-3 border-t backdrop-blur-sm px-4 sm:px-6 py-3 sm:py-4 transition-colors duration-300 ${
+              theme === 'dark' 
+                ? 'border-white/10 bg-white/5' 
+                : 'border-stone-200 bg-stone-50'
+            }`}>
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-slate-300 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md group"
+                className={`w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold hover:border-emerald-400/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md group ${
+                  theme === 'dark' 
+                    ? 'border-white/20 bg-white/5 text-white hover:bg-white/10 disabled:hover:bg-white/5 disabled:hover:border-white/20' 
+                    : 'border-stone-300 bg-white text-stone-900 hover:bg-stone-50 disabled:hover:bg-white disabled:hover:border-stone-300'
+                }`}
               >
                 <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 group-hover:-translate-x-1 transition-transform duration-200" />
                 Previous
               </button>
-              <span className="text-xs sm:text-sm font-semibold text-slate-700 bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border-2 border-slate-200 shadow-sm">
+              <span className={`text-xs sm:text-sm font-semibold backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg border shadow-sm transition-colors duration-300 ${
+                theme === 'dark' 
+                  ? 'text-white bg-white/10 border-white/20' 
+                  : 'text-stone-900 bg-white border-stone-300'
+              }`}>
                 Page {currentPage} of {totalPages}
               </span>
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 border-slate-300 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md group"
+                className={`w-full sm:w-auto inline-flex items-center justify-center rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold hover:border-emerald-400/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md group ${
+                  theme === 'dark' 
+                    ? 'border-white/20 bg-white/5 text-white hover:bg-white/10 disabled:hover:bg-white/5 disabled:hover:border-white/20' 
+                    : 'border-stone-300 bg-white text-stone-900 hover:bg-stone-50 disabled:hover:bg-white disabled:hover:border-stone-300'
+                }`}
               >
                 Next
                 <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" />
@@ -451,9 +545,15 @@ export default function UsersPage() {
 
       {/* Create User Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4">
-          <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-xl sm:rounded-2xl bg-white shadow-2xl border-2 border-slate-200">
-            <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 rounded-t-xl sm:rounded-t-2xl border-b-2 border-blue-700">
+        <div className={`fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md p-3 sm:p-4 transition-colors duration-300 ${
+          theme === 'dark' ? 'bg-black/70' : 'bg-black/40'
+        }`}>
+          <div className={`max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-xl sm:rounded-2xl backdrop-blur-xl shadow-2xl border transition-colors duration-300 ${
+            theme === 'dark' 
+              ? 'bg-slate-900/95 border-white/10' 
+              : 'bg-white border-stone-200'
+          }`}>
+            <div className="sticky top-0 bg-gradient-to-r from-emerald-600 to-emerald-700 px-4 sm:px-6 lg:px-8 py-4 sm:py-5 lg:py-6 rounded-t-xl sm:rounded-t-2xl border-b border-white/10">
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg bg-white/20 flex items-center justify-center">
                   <UserPlus className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
@@ -464,54 +564,60 @@ export default function UsersPage() {
             <form onSubmit={handleCreateUser} className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-5">
               <div className="grid gap-4 sm:gap-5 sm:grid-cols-2">
                 <div>
-                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
-                    <UserIcon className="h-4 w-4 mr-1.5 text-blue-600" />
-                    Name <span className="text-red-500 ml-1">*</span>
+                  <label className={`flex items-center text-sm font-semibold mb-2 transition-colors duration-300 ${
+                    theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+                  }`}>
+                    <UserIcon className="h-4 w-4 mr-1.5 text-emerald-400" />
+                    Name <span className="text-red-400 ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                    className={`w-full rounded-xl backdrop-blur-sm border-2 px-4 py-2.5 focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-300 ${
+                      theme === 'dark' 
+                        ? 'bg-white/5 border-white/20 text-white placeholder-stone-400' 
+                        : 'bg-white border-stone-300 text-stone-900 placeholder-stone-500'
+                    }`}
                   />
                 </div>
                 <div>
-                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
-                    <Mail className="h-4 w-4 mr-1.5 text-blue-600" />
-                    Email <span className="text-red-500 ml-1">*</span>
+                  <label className="flex items-center text-sm font-semibold text-stone-300 mb-2">
+                    <Mail className="h-4 w-4 mr-1.5 text-emerald-400" />
+                    Email <span className="text-red-400 ml-1">*</span>
                   </label>
                   <input
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                    className="w-full rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-4 py-2.5 text-white placeholder-stone-400 focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
-                    <Building2 className="h-4 w-4 mr-1.5 text-blue-600" />
-                    Business Name <span className="text-red-500 ml-1">*</span>
+                  <label className="flex items-center text-sm font-semibold text-stone-300 mb-2">
+                    <Building2 className="h-4 w-4 mr-1.5 text-emerald-400" />
+                    Business Name <span className="text-red-400 ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.businessName}
                     onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                    className="w-full rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-4 py-2.5 text-white placeholder-stone-400 focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
-                    <MapPin className="h-4 w-4 mr-1.5 text-blue-600" />
-                    Province <span className="text-red-500 ml-1">*</span>
+                  <label className="flex items-center text-sm font-semibold text-stone-300 mb-2">
+                    <MapPin className="h-4 w-4 mr-1.5 text-emerald-400" />
+                    Province <span className="text-red-400 ml-1">*</span>
                   </label>
                   <select
                     required
                     value={formData.province}
                     onChange={(e) => setFormData({ ...formData, province: e.target.value })}
-                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                    className="w-full rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-4 py-2.5 text-white focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                   >
                     <option value="">Select Province</option>
                     {PROVINCES.map((province) => (
@@ -522,35 +628,35 @@ export default function UsersPage() {
                   </select>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
-                    <MapPin className="h-4 w-4 mr-1.5 text-blue-600" />
-                    Address <span className="text-red-500 ml-1">*</span>
+                  <label className="flex items-center text-sm font-semibold text-stone-300 mb-2">
+                    <MapPin className="h-4 w-4 mr-1.5 text-emerald-400" />
+                    Address <span className="text-red-400 ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                    className="w-full rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-4 py-2.5 text-white placeholder-stone-400 focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
-                    <CreditCard className="h-4 w-4 mr-1.5 text-blue-600" />
-                    NTN/CNIC <span className="text-red-500 ml-1">*</span>
+                  <label className="flex items-center text-sm font-semibold text-stone-300 mb-2">
+                    <CreditCard className="h-4 w-4 mr-1.5 text-emerald-400" />
+                    NTN/CNIC <span className="text-red-400 ml-1">*</span>
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.ntncnic}
                     onChange={(e) => setFormData({ ...formData, ntncnic: e.target.value })}
-                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                    className="w-full rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-4 py-2.5 text-white placeholder-stone-400 focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                   />
                 </div>
                 <div>
-                  <label className="flex items-center text-sm font-semibold text-slate-700 mb-2">
-                    <Lock className="h-4 w-4 mr-1.5 text-blue-600" />
-                    Password <span className="text-red-500 ml-1">*</span>
+                  <label className="flex items-center text-sm font-semibold text-stone-300 mb-2">
+                    <Lock className="h-4 w-4 mr-1.5 text-emerald-400" />
+                    Password <span className="text-red-400 ml-1">*</span>
                   </label>
                   <input
                     type="password"
@@ -558,9 +664,9 @@ export default function UsersPage() {
                     minLength={8}
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full rounded-xl border-2 border-slate-200 px-4 py-2.5 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all duration-200"
+                    className="w-full rounded-xl bg-white/5 backdrop-blur-sm border-2 border-white/20 px-4 py-2.5 text-white placeholder-stone-400 focus:border-emerald-400/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                   />
-                  <p className="mt-2 text-xs text-slate-500 flex items-center">
+                  <p className="mt-2 text-xs text-stone-400 flex items-center">
                     <Shield className="h-3 w-3 mr-1" />
                     Min. 8 characters with uppercase, lowercase, number & special char
                   </p>
@@ -568,25 +674,25 @@ export default function UsersPage() {
               </div>
 
               {/* FBR Token Fields Section - Collapsible */}
-              <div className="border-t-2 border-slate-200 pt-5 mt-5">
+              <div className="border-t border-white/10 pt-5 mt-5">
                 <button
                   type="button"
                   onClick={() => setShowFbrTokensCreate(!showFbrTokensCreate)}
-                  className="w-full flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-indigo-50 to-blue-50 hover:from-indigo-100 hover:to-blue-100 border-2 border-indigo-200 transition-all duration-200 group"
+                  className="w-full flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-emerald-400/30 backdrop-blur-sm transition-all duration-200 group"
                 >
                   <div className="flex items-center">
-                    <KeyRound className="h-5 w-5 mr-3 text-indigo-600 group-hover:scale-110 transition-transform duration-200" />
+                    <KeyRound className="h-5 w-5 mr-3 text-emerald-400 group-hover:scale-110 transition-transform duration-200" />
                     <div className="text-left">
-                      <h4 className="text-base font-bold text-slate-900">FBR API Tokens</h4>
-                      <p className="text-xs text-slate-600 mt-0.5">Optional - Click to {showFbrTokensCreate ? 'hide' : 'add'} token credentials</p>
+                      <h4 className="text-base font-bold text-white">FBR API Tokens</h4>
+                      <p className="text-xs text-stone-300 mt-0.5">Optional - Click to {showFbrTokensCreate ? 'hide' : 'add'} token credentials</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-semibold text-indigo-600 bg-white px-2 py-1 rounded-full">Optional</span>
+                    <span className="text-xs font-semibold text-emerald-400 bg-emerald-500/20 px-2 py-1 rounded-full border border-emerald-500/30">Optional</span>
                     {showFbrTokensCreate ? (
-                      <ChevronUp className="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-200" />
+                      <ChevronUp className="h-5 w-5 text-emerald-400 group-hover:scale-110 transition-transform duration-200" />
                     ) : (
-                      <ChevronDown className="h-5 w-5 text-indigo-600 group-hover:scale-110 transition-transform duration-200" />
+                      <ChevronDown className="h-5 w-5 text-emerald-400 group-hover:scale-110 transition-transform duration-200" />
                     )}
                   </div>
                 </button>

@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { ThemeProvider } from '@/contexts/ThemeContext';
 
 export const metadata: Metadata = {
   title: 'Admin Panel - Saad Traders',
@@ -11,5 +12,5 @@ export default function AdminRootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <ThemeProvider>{children}</ThemeProvider>;
 }

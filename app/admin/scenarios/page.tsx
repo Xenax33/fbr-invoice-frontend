@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import AdminLayout from '@/components/layouts/AdminLayout';
+import { useTheme } from '@/contexts/ThemeContext';
 import {
   useGlobalScenarios,
   useCreateGlobalScenario,
@@ -20,6 +21,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminScenariosPage() {
+  const { theme } = useTheme();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -95,18 +97,22 @@ export default function AdminScenariosPage() {
         {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <Layers className="w-8 h-8 text-indigo-600" />
+          <h1 className={`text-3xl font-bold flex items-center gap-3 transition-colors duration-300 ${
+            theme === 'dark' ? 'text-white' : 'text-stone-900'
+          }`}>
+            <Layers className="w-8 h-8 text-emerald-400" />
             Global Scenarios
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className={`mt-2 transition-colors duration-300 ${
+            theme === 'dark' ? 'text-stone-200/85' : 'text-stone-700'
+          }`}>
             Manage the global catalog of scenarios. Assign scenarios to users to
             enable them for invoice creation.
           </p>
         </div>
         <button
           onClick={handleCreate}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+          className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-900/30 flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
           Create Scenario
@@ -115,50 +121,76 @@ export default function AdminScenariosPage() {
 
       {/* Search Bar */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 transition-colors duration-300 ${
+          theme === 'dark' ? 'text-stone-400' : 'text-stone-600'
+        }`} />
         <input
           type="text"
           placeholder="Search scenarios by code or description..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          className={`w-full pl-10 pr-4 py-2 backdrop-blur-sm border-2 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400/50 transition-colors duration-300 ${
+            theme === 'dark' 
+              ? 'bg-white/5 border-white/20 text-white placeholder-stone-400' 
+              : 'bg-white border-stone-300 text-stone-900 placeholder-stone-500'
+          }`}
         />
       </div>
 
       {/* Scenarios List */}
       {isLoading ? (
         <div className="text-center py-12">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-600 border-r-transparent"></div>
-          <p className="mt-4 text-gray-600">Loading scenarios...</p>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-emerald-500 border-r-transparent"></div>
+          <p className={`mt-4 transition-colors duration-300 ${
+            theme === 'dark' ? 'text-stone-200' : 'text-stone-700'
+          }`}>Loading scenarios...</p>
         </div>
       ) : filteredScenarios && filteredScenarios.length > 0 ? (
         <div className="grid gap-4">
           {filteredScenarios.map((scenario) => (
             <div
               key={scenario.id}
-              className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
+              className={`backdrop-blur-xl border rounded-lg p-5 hover:shadow-lg hover:border-emerald-400/30 transition-all duration-300 ${
+                theme === 'dark' 
+                  ? 'bg-white/5 border-white/10 hover:shadow-emerald-900/20' 
+                  : 'bg-white border-stone-200 hover:shadow-stone-900/10'
+              }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <FileText className="w-5 h-5 text-purple-600" />
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <FileText className="w-5 h-5 text-emerald-400" />
+                    <h3 className={`text-lg font-semibold transition-colors duration-300 ${
+                      theme === 'dark' ? 'text-white' : 'text-stone-900'
+                    }`}>
                       {scenario.scenarioCode}
                     </h3>
                   </div>
-                  <p className="text-gray-600 ml-8">
+                  <p className={`ml-8 transition-colors duration-300 ${
+                    theme === 'dark' ? 'text-stone-200/85' : 'text-stone-700'
+                  }`}>
                     {scenario.scenarioDescription}
                   </p>
                   <div className="flex flex-wrap items-center gap-3 ml-8 mt-3">
-                    <span className="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 border border-indigo-100">
+                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold backdrop-blur-sm transition-colors duration-300 ${
+                      theme === 'dark'
+                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                        : 'bg-emerald-100 text-emerald-700 border border-emerald-300'
+                    }`}>
                       {scenario.salesType || '—'}
                     </span>
                     {scenario.fbrId && (
-                      <span className="inline-flex items-center rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700 border border-purple-100">
+                      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold backdrop-blur-sm transition-colors duration-300 ${
+                        theme === 'dark'
+                          ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                          : 'bg-cyan-100 text-cyan-700 border border-cyan-300'
+                      }`}>
                         FBR ID: {scenario.fbrId}
                       </span>
                     )}
-                    <span className="text-sm text-gray-400">
+                    <span className={`text-sm transition-colors duration-300 ${
+                      theme === 'dark' ? 'text-stone-400' : 'text-stone-600'
+                    }`}>
                       Created: {new Date(scenario.createdAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -166,14 +198,14 @@ export default function AdminScenariosPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleEdit(scenario)}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    className="p-2 text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-all border border-transparent hover:border-cyan-500/30"
                     title="Edit"
                   >
                     <Pencil className="w-5 h-5" />
                   </button>
                   <button
                     onClick={() => handleDelete(scenario.id)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-all border border-transparent hover:border-red-500/30"
                     title="Delete"
                   >
                     <Trash2 className="w-5 h-5" />
@@ -184,12 +216,22 @@ export default function AdminScenariosPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <Layers className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600 text-lg">
+        <div className={`text-center py-12 backdrop-blur-xl rounded-lg border transition-colors duration-300 ${
+          theme === 'dark' 
+            ? 'bg-white/5 border-white/10' 
+            : 'bg-white border-stone-200'
+        }`}>
+          <Layers className={`w-16 h-16 mx-auto mb-4 transition-colors duration-300 ${
+            theme === 'dark' ? 'text-stone-400' : 'text-stone-500'
+          }`} />
+          <p className={`text-lg transition-colors duration-300 ${
+            theme === 'dark' ? 'text-stone-200' : 'text-stone-700'
+          }`}>
             {searchTerm ? 'No scenarios found' : 'No scenarios yet'}
           </p>
-          <p className="text-gray-400 mt-2">
+          <p className={`mt-2 transition-colors duration-300 ${
+            theme === 'dark' ? 'text-stone-400' : 'text-stone-600'
+          }`}>
             {searchTerm
               ? 'Try adjusting your search'
               : 'Create your first global scenario'}
@@ -199,22 +241,34 @@ export default function AdminScenariosPage() {
 
       {/* Create Modal */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+        <div className={`fixed inset-0 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-colors duration-300 ${
+          theme === 'dark' ? 'bg-black/70' : 'bg-black/40'
+        }`}>
+          <div className={`backdrop-blur-xl border rounded-lg max-w-md w-full p-6 shadow-2xl transition-colors duration-300 ${
+            theme === 'dark' 
+              ? 'bg-slate-900/95 border-white/10' 
+              : 'bg-white border-stone-200'
+          }`}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className={`text-xl font-semibold transition-colors duration-300 ${
+                theme === 'dark' ? 'text-white' : 'text-stone-900'
+              }`}>
                 Create Global Scenario
               </h2>
               <button
                 onClick={() => setIsCreateModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className={`transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-stone-400 hover:text-white' : 'text-stone-600 hover:text-stone-900'
+                }`}
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
             <form onSubmit={handleSubmitCreate} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className={`block text-sm font-medium mb-1 transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+                }`}>
                   Scenario Code *
                 </label>
                 <input
@@ -223,13 +277,19 @@ export default function AdminScenariosPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, scenarioCode: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={`w-full px-3 py-2 backdrop-blur-sm border-2 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400/50 transition-colors duration-300 ${
+                    theme === 'dark' 
+                      ? 'bg-white/5 border-white/20 text-white placeholder-stone-400' 
+                      : 'bg-white border-stone-300 text-stone-900 placeholder-stone-500'
+                  }`}
                   placeholder="e.g., SN001"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className={`block text-sm font-medium mb-1 transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+                }`}>
                   Description *
                 </label>
                 <textarea
@@ -240,14 +300,20 @@ export default function AdminScenariosPage() {
                       scenarioDescription: e.target.value,
                     })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={`w-full px-3 py-2 backdrop-blur-sm border-2 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400/50 transition-colors duration-300 ${
+                    theme === 'dark'
+                      ? 'bg-white/5 border-white/20 text-white placeholder-stone-400'
+                      : 'bg-white border-stone-300 text-stone-900 placeholder-stone-500'
+                  }`}
                   placeholder="e.g., Goods at standard rate to registered buyers"
                   rows={3}
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className={`block text-sm font-medium mb-1 transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+                }`}>
                   Sales Type *
                 </label>
                 <input
@@ -256,13 +322,19 @@ export default function AdminScenariosPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, salesType: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={`w-full px-3 py-2 backdrop-blur-sm border-2 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400/50 transition-colors duration-300 ${
+                    theme === 'dark'
+                      ? 'bg-white/5 border-white/20 text-white placeholder-stone-400'
+                      : 'bg-white border-stone-300 text-stone-900 placeholder-stone-500'
+                  }`}
                   placeholder="e.g., Goods at Standard Rate (default)"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className={`block text-sm font-medium mb-1 transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+                }`}>
                   FBR ID
                 </label>
                 <input
@@ -271,7 +343,11 @@ export default function AdminScenariosPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, fbrId: e.target.value ? parseInt(e.target.value) : undefined })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={`w-full px-3 py-2 backdrop-blur-sm border-2 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400/50 transition-colors duration-300 ${
+                    theme === 'dark'
+                      ? 'bg-white/5 border-white/20 text-white placeholder-stone-400'
+                      : 'bg-white border-stone-300 text-stone-900 placeholder-stone-500'
+                  }`}
                   placeholder="e.g., 3"
                 />
               </div>
@@ -279,13 +355,17 @@ export default function AdminScenariosPage() {
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  className={`flex-1 px-4 py-2 border-2 rounded-lg transition-all duration-300 ${
+                    theme === 'dark'
+                      ? 'border-white/20 text-white hover:bg-white/10'
+                      : 'border-stone-300 text-stone-700 hover:bg-stone-50'
+                  }`}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg hover:from-emerald-600 hover:to-emerald-700 transition-all shadow-lg shadow-emerald-900/30"
                 >
                   Create
                 </button>
@@ -297,22 +377,34 @@ export default function AdminScenariosPage() {
 
       {/* Edit Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
+        <div className={`fixed inset-0 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-colors duration-300 ${
+          theme === 'dark' ? 'bg-black/70' : 'bg-black/40'
+        }`}>
+          <div className={`backdrop-blur-xl border rounded-lg max-w-md w-full p-6 shadow-2xl transition-colors duration-300 ${
+            theme === 'dark'
+              ? 'bg-slate-900/95 border-white/10'
+              : 'bg-white border-stone-200'
+          }`}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className={`text-xl font-semibold transition-colors duration-300 ${
+                theme === 'dark' ? 'text-white' : 'text-stone-900'
+              }`}>
                 Edit Global Scenario
               </h2>
               <button
                 onClick={() => setIsEditModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className={`transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-stone-400 hover:text-white' : 'text-stone-600 hover:text-stone-900'
+                }`}
               >
                 <X className="w-6 h-6" />
               </button>
             </div>
             <form onSubmit={handleSubmitEdit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className={`block text-sm font-medium mb-1 transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+                }`}>
                   Scenario Code *
                 </label>
                 <input
@@ -321,13 +413,19 @@ export default function AdminScenariosPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, scenarioCode: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={`w-full px-3 py-2 backdrop-blur-sm border-2 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400/50 transition-colors duration-300 ${
+                    theme === 'dark'
+                      ? 'bg-white/5 border-white/20 text-white placeholder-stone-400'
+                      : 'bg-white border-stone-300 text-stone-900 placeholder-stone-500'
+                  }`}
                   placeholder="e.g., SN001"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className={`block text-sm font-medium mb-1 transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+                }`}>
                   Description *
                 </label>
                 <textarea
@@ -338,14 +436,20 @@ export default function AdminScenariosPage() {
                       scenarioDescription: e.target.value,
                     })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={`w-full px-3 py-2 backdrop-blur-sm border-2 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400/50 transition-colors duration-300 ${
+                    theme === 'dark'
+                      ? 'bg-white/5 border-white/20 text-white placeholder-stone-400'
+                      : 'bg-white border-stone-300 text-stone-900 placeholder-stone-500'
+                  }`}
                   placeholder="e.g., Goods at standard rate to registered buyers"
                   rows={3}
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className={`block text-sm font-medium mb-1 transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+                }`}>
                   Sales Type *
                 </label>
                 <input
@@ -354,13 +458,19 @@ export default function AdminScenariosPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, salesType: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={`w-full px-3 py-2 backdrop-blur-sm border-2 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400/50 transition-colors duration-300 ${
+                    theme === 'dark'
+                      ? 'bg-white/5 border-white/20 text-white placeholder-stone-400'
+                      : 'bg-white border-stone-300 text-stone-900 placeholder-stone-500'
+                  }`}
                   placeholder="e.g., Goods at Standard Rate (default)"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className={`block text-sm font-medium mb-1 transition-colors duration-300 ${
+                  theme === 'dark' ? 'text-stone-300' : 'text-stone-700'
+                }`}>
                   FBR ID
                 </label>
                 <input
@@ -369,7 +479,11 @@ export default function AdminScenariosPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, fbrId: e.target.value ? parseInt(e.target.value) : undefined })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className={`w-full px-3 py-2 backdrop-blur-sm border-2 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400/50 transition-colors duration-300 ${
+                    theme === 'dark'
+                      ? 'bg-white/5 border-white/20 text-white placeholder-stone-400'
+                      : 'bg-white border-stone-300 text-stone-900 placeholder-stone-500'
+                  }`}
                   placeholder="e.g., 3"
                 />
               </div>
@@ -377,13 +491,17 @@ export default function AdminScenariosPage() {
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  className={`flex-1 px-4 py-2 border-2 rounded-lg transition-all duration-300 ${
+                    theme === 'dark'
+                      ? 'border-white/20 text-white hover:bg-white/10'
+                      : 'border-stone-300 text-stone-700 hover:bg-stone-50'
+                  }`}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg hover:from-cyan-600 hover:to-cyan-700 transition-all shadow-lg shadow-cyan-900/30"
                 >
                   Save Changes
                 </button>
